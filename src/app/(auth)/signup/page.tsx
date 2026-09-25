@@ -196,7 +196,7 @@ function SignupForm() {
           <div className="mx-auto h-16 w-16 rounded-2xl bg-emerald-500/15 flex items-center justify-center text-emerald-400">
             <CheckCircle2 className="h-8 w-8" />
           </div>
-          <h2 className="text-2xl font-black text-foreground">Welcome to ToolVerse AI!</h2>
+          <h2 className="text-2xl font-black text-foreground">Welcome to Korevante Studio!</h2>
           <p className="text-muted-foreground text-sm font-medium">
             Your 7-day free trial of <span className="text-emerald-400 font-bold">{activePlan.title}</span> is active. Entering your dashboard…
           </p>

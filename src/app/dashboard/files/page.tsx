@@ -6,7 +6,7 @@ import { FilesClient } from "@/components/dashboard/files-client";
 import { HardDrive } from "lucide-react";
 
 export const metadata: Metadata = {
-  title: "My Cloud Vault | ToolVerse AI",
+  title: "My Cloud Vault | Korevante Studio",
   description: "Securely view, upload, and download your creative assets",
 };
 

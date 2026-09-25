@@ -78,7 +78,7 @@ export function DashboardSidebar() {
         {!collapsed ? (
           <Logo size="sm" href="/" />
         ) : (
-          <Link href="/" title="ToolVerse AI" className="flex items-center justify-center hover:scale-105 transition-transform">
+          <Link href="/" title="Korevante Studio" className="flex items-center justify-center hover:scale-105 transition-transform">
             <LogoIcon className="h-7 w-7" />
           </Link>
         )}

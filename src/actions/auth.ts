@@ -82,8 +82,8 @@ export async function signupAction(
         },
         notifications: {
           create: {
-            title: "Welcome to ToolVerse AI! 🎉",
-            message: `Your 7-day free trial of ToolVerse AI is now active! Explore 50+ tools and create amazing things. Trial ends on ${trialEnd.toLocaleDateString("en-IN", { dateStyle: "long" })}.`,
+            title: "Welcome to Korevante Studio! 🎉",
+            message: `Your 7-day free trial of Korevante Studio is now active! Explore 50+ tools and create amazing things. Trial ends on ${trialEnd.toLocaleDateString("en-IN", { dateStyle: "long" })}.`,
             type: "SUCCESS",
           },
         },

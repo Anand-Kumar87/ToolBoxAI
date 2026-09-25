@@ -4,7 +4,7 @@ import { Footer } from "@/components/layout/footer";
 import { Preloader } from "@/components/layout/preloader";
 
 export const metadata: Metadata = {
-  title: "ToolVerse AI",
+  title: "Korevante Studio",
 };
 
 export default function MarketingLayout({

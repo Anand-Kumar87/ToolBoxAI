@@ -194,15 +194,15 @@ async function main() {
   // ─── 3. SEED ADMIN USER ───────────────────────────────────────────
   console.log("👤 Seeding admin user...");
 
-  const adminEmail = process.env.ADMIN_EMAIL || "admin@toolverse.ai";
-  const adminPassword = process.env.ADMIN_PASSWORD || "Admin@Toolverse2024!";
+  const adminEmail = process.env.ADMIN_EMAIL || "admin@korevante.com";
+  const adminPassword = process.env.ADMIN_PASSWORD || "Admin@Korevante2024!";
   const hashedPassword = await bcrypt.hash(adminPassword, 12);
 
   const adminUser = await prisma.user.upsert({
     where: { email: adminEmail },
     update: {},
     create: {
-      name: "ToolVerse Admin",
+      name: "Korevante Admin",
       email: adminEmail,
       password: hashedPassword,
       role: "ADMIN",

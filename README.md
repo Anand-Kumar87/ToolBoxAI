@@ -1,8 +1,8 @@
-# ToolVerse AI — Premium SaaS Platform
+# Korevante Studio — Premium SaaS Platform
 
-![ToolVerse AI](https://images.unsplash.com/photo-1614729939124-032f0b56c9ce?q=80&w=2000&auto=format&fit=crop)
+![Korevante Studio](https://images.unsplash.com/photo-1614729939124-032f0b56c9ce?q=80&w=2000&auto=format&fit=crop)
 
-ToolVerse AI is a comprehensive, production-ready SaaS platform offering 50+ tools covering AI Content Generation, Image Processing, PDF Manipulation, Video Utilities, and Developer Productivity.
+Korevante Studio is a comprehensive, production-ready SaaS platform offering 50+ tools covering AI Content Generation, Image Processing, PDF Manipulation, Video Utilities, and Developer Productivity.
 
 ## 🚀 Features
 
@@ -58,7 +58,7 @@ ToolVerse AI is a comprehensive, production-ready SaaS platform offering 50+ too
 ## 🔐 Admin Access
 
 The database seed script automatically creates an admin account:
-* **Email**: `admin@toolverse.ai`
+* **Email**: `admin@korevante.com`
 * **Password**: `Admin@1234`
 * **Plan**: PREMIUM
 

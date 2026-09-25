@@ -18,7 +18,7 @@ export async function generateMetadata({ params }: { params: Promise<{ category:
   const tool = TOOLS_REGISTRY.find((t) => t.slug === slug && t.category.toLowerCase() === category.toLowerCase());
 
   if (!tool) return { title: "Tool Not Found" };
-  return { title: `${tool.name} | ToolVerse AI`, description: tool.description };
+  return { title: `${tool.name} | Korevante Studio`, description: tool.description };
 }
 
 export default async function ToolPage({ params }: { params: Promise<{ category: string; slug: string }> }) {

@@ -84,7 +84,7 @@ export function RazorpayCheckout({
         key: keyId,
         amount: amount,
         currency: currency,
-        name: "ToolVerse AI",
+        name: "Korevante Studio",
         description: `Subscription to ${displayTitle} Plan`,
         order_id: orderId,
         handler: async function (response: any) {

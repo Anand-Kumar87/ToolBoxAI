@@ -14,7 +14,7 @@ import {
 import { Badge } from "@/components/ui/badge";
 
 export const metadata: Metadata = { 
-  title: "Refund & Cancellation Policy | ToolVerse AI",
+  title: "Refund & Cancellation Policy | Korevante Studio",
   description: "Learn about our 7-day money-back guarantee, refund eligibility, cancellation process, and timelines.",
 };
 
@@ -26,7 +26,7 @@ const REFUND_SECTIONS = [
     content: (
       <>
         <p className="mb-3">
-          At ToolVerse AI, customer satisfaction is our top priority. We stand firmly behind the performance, speed, and accuracy of our 50+ integrated tools.
+          At Korevante Studio, customer satisfaction is our top priority. We stand firmly behind the performance, speed, and accuracy of our 50+ integrated tools.
         </p>
         <p className="mb-3">
           If you upgrade to any paid tier (Starter, Pro Creator, or Enterprise) and determine that our platform does not suit your operational needs, you are eligible for a <strong>100% full refund</strong> within <strong>seven (7) calendar days</strong> of your initial billing transaction.
@@ -84,7 +84,7 @@ const REFUND_SECTIONS = [
         </p>
         <ol className="list-decimal pl-5 space-y-3 mb-4">
           <li>
-            <strong>Send an Email:</strong> Contact our billing team at <a href="mailto:billing@toolverse.ai" className="text-primary font-bold hover:underline">billing@toolverse.ai</a> or <a href="mailto:support@toolverse.ai" className="text-primary font-bold hover:underline">support@toolverse.ai</a>.
+            <strong>Send an Email:</strong> Contact our billing team at <a href="mailto:billing@korevante.com" className="text-primary font-bold hover:underline">billing@korevante.com</a> or <a href="mailto:support@korevante.com" className="text-primary font-bold hover:underline">support@korevante.com</a>.
           </li>
           <li>
             <strong>Include Order Credentials:</strong> Provide your registered account email address and your Razorpay Payment ID / Order ID (available in your email receipt or Dashboard &gt; Billing).
@@ -106,7 +106,7 @@ const REFUND_SECTIONS = [
     content: (
       <>
         <p className="mb-3">
-          Once your refund is approved by ToolVerse AI, the funds are instantly remitted back to Razorpay for processing to your original payment instrument:
+          Once your refund is approved by Korevante Studio, the funds are instantly remitted back to Razorpay for processing to your original payment instrument:
         </p>
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 my-4">
           <div className="neu-pressed p-4 rounded-2xl text-center">
@@ -126,7 +126,7 @@ const REFUND_SECTIONS = [
           </div>
         </div>
         <p className="text-xs text-muted-foreground">
-          Depending on your issuing bank, the credit may appear on your statement as &quot;Razorpay Software&quot; or &quot;ToolVerse AI&quot;.
+          Depending on your issuing bank, the credit may appear on your statement as &quot;Razorpay Software&quot; or &quot;Korevante Studio&quot;.
         </p>
       </>
     ),

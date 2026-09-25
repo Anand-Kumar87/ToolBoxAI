@@ -77,7 +77,7 @@ export async function createOrderAction(
       notes: {
         userId,
         planTier,
-        platform: "toolverse-ai",
+        platform: "korevante-studio",
       },
     });
 

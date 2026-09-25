@@ -6,7 +6,7 @@ import { ProjectsClient } from "@/components/dashboard/projects-client";
 import { FolderKanban } from "lucide-react";
 
 export const metadata: Metadata = {
-  title: "Projects & Workspaces | ToolVerse AI",
+  title: "Projects & Workspaces | Korevante Studio",
   description: "Manage your creative AI projects and organized workspaces",
 };
 

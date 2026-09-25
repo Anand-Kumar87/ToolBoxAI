@@ -16,19 +16,19 @@ export const transporter = nodemailer.createTransport({
 
 export async function sendPasswordResetEmail(toEmail: string, resetUrl: string) {
   const mailOptions = {
-    from: `"ToolVerse AI Security" <${gmailUser}>`,
+    from: `"Korevante Studio Security" <${gmailUser}>`,
     to: toEmail,
-    subject: "Reset your ToolVerse AI Password",
+    subject: "Reset your Korevante Studio Password",
     html: `
       <div style="font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; max-width: 600px; margin: 0 auto; background-color: #0b0f17; color: #f1f5f9; border-radius: 16px; overflow: hidden; border: 1px solid #1e293b;">
         <div style="background: linear-gradient(135deg, #10b981 0%, #059669 100%); padding: 32px 24px; text-align: center;">
-          <h1 style="color: #ffffff; margin: 0; font-size: 26px; font-weight: 800; letter-spacing: -0.5px;">ToolVerse AI</h1>
+          <h1 style="color: #ffffff; margin: 0; font-size: 26px; font-weight: 800; letter-spacing: -0.5px;">Korevante Studio</h1>
           <p style="color: #d1fae5; margin: 8px 0 0 0; font-size: 14px;">Next-Generation Creative & Engineering Suite</p>
         </div>
         <div style="padding: 32px 24px;">
           <h2 style="color: #ffffff; font-size: 20px; font-weight: 600; margin-top: 0;">Password Reset Request</h2>
           <p style="color: #94a3b8; font-size: 15px; line-height: 1.6;">
-            We received a request to reset the password for your ToolVerse AI account. Click the button below to choose a new secure password:
+            We received a request to reset the password for your Korevante Studio account. Click the button below to choose a new secure password:
           </p>
           <div style="text-align: center; margin: 32px 0;">
             <a href="${resetUrl}" style="display: inline-block; background-color: #10b981; color: #ffffff; font-size: 16px; font-weight: 600; text-decoration: none; padding: 14px 32px; border-radius: 12px; box-shadow: 0 4px 14px rgba(16, 185, 129, 0.4);">
@@ -45,7 +45,7 @@ export async function sendPasswordResetEmail(toEmail: string, resetUrl: string) 
           </p>
         </div>
         <div style="background-color: #030712; padding: 16px 24px; text-align: center; border-top: 1px solid #1e293b;">
-          <p style="color: #475569; font-size: 12px; margin: 0;">&copy; ${new Date().getFullYear()} ToolVerse AI. All rights reserved.</p>
+          <p style="color: #475569; font-size: 12px; margin: 0;">&copy; ${new Date().getFullYear()} Korevante Studio. All rights reserved.</p>
         </div>
       </div>
     `,
@@ -63,13 +63,13 @@ export async function sendPasswordResetEmail(toEmail: string, resetUrl: string) 
 
 export async function sendWelcomeEmail(toEmail: string, name: string, planTitle: string) {
   const mailOptions = {
-    from: `"ToolVerse AI" <${gmailUser}>`,
+    from: `"Korevante Studio" <${gmailUser}>`,
     to: toEmail,
-    subject: `Welcome to ToolVerse AI, ${name}! 🎉`,
+    subject: `Welcome to Korevante Studio, ${name}! 🎉`,
     html: `
       <div style="font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; max-width: 600px; margin: 0 auto; background-color: #0b0f17; color: #f1f5f9; border-radius: 16px; overflow: hidden; border: 1px solid #1e293b;">
         <div style="background: linear-gradient(135deg, #10b981 0%, #059669 100%); padding: 32px 24px; text-align: center;">
-          <h1 style="color: #ffffff; margin: 0; font-size: 26px; font-weight: 800;">Welcome to ToolVerse AI!</h1>
+          <h1 style="color: #ffffff; margin: 0; font-size: 26px; font-weight: 800;">Welcome to Korevante Studio!</h1>
           <p style="color: #d1fae5; margin: 8px 0 0 0; font-size: 14px;">Your 7-Day Free Trial is Now Active</p>
         </div>
         <div style="padding: 32px 24px;">
@@ -77,7 +77,7 @@ export async function sendWelcomeEmail(toEmail: string, name: string, planTitle:
             Hi <strong>${name}</strong>,
           </p>
           <p style="color: #94a3b8; font-size: 15px; line-height: 1.6;">
-            Welcome to ToolVerse AI! Your account has been unlocked with 7 days of complimentary access to our <strong>${planTitle}</strong> plan.
+            Welcome to Korevante Studio! Your account has been unlocked with 7 days of complimentary access to our <strong>${planTitle}</strong> plan.
           </p>
           <div style="background: #111827; border: 1px solid #1f2937; border-radius: 12px; padding: 20px; margin: 24px 0;">
             <h4 style="margin: 0 0 12px 0; color: #10b981; font-size: 15px;">What's included in your trial:</h4>
@@ -113,10 +113,10 @@ export async function sendContactInquiryEmail(data: {
 }) {
   const adminRecipient = "Solestyle41@gmail.com";
   const mailOptions = {
-    from: `"ToolVerse AI Inquiries" <${gmailUser}>`,
+    from: `"Korevante Studio Inquiries" <${gmailUser}>`,
     to: adminRecipient,
     replyTo: data.email,
-    subject: `[ToolVerse Contact] ${data.subject} - from ${data.name}`,
+    subject: `[Korevante Contact] ${data.subject} - from ${data.name}`,
     html: `
       <div style="font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; max-width: 600px; margin: 0 auto; background-color: #0b0f17; color: #f1f5f9; border-radius: 16px; overflow: hidden; border: 1px solid #1e293b;">
         <div style="background: linear-gradient(135deg, #10b981 0%, #059669 100%); padding: 24px; text-align: center;">

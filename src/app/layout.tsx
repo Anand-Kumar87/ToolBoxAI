@@ -19,28 +19,28 @@ const headingFont = Outfit({
 
 export const metadata: Metadata = {
   title: {
-    default: "ToolVerse AI - 50+ All-in-One AI, Video, Image, PDF & Dev Tools",
-    template: "%s | ToolVerse AI",
+    default: "Korevante Studio - 50+ All-in-One AI, Video, Image, PDF & Dev Tools",
+    template: "%s | Korevante Studio",
   },
   description:
     "Premium all-in-one SaaS platform providing 50+ production-ready AI, Image, Video, PDF, Content Writing, and Developer productivity tools. Start your 7-day free trial today.",
   keywords: [
     "AI Tools", "Image Editor", "Video Compressor", "PDF Merge",
-    "Background Remover", "AI Content Writer", "ToolVerse AI", "SaaS",
+    "Background Remover", "AI Content Writer", "Korevante Studio", "SaaS",
   ],
-  authors: [{ name: "ToolVerse AI Team" }],
-  creator: "ToolVerse AI",
+  authors: [{ name: "Korevante Studio Team" }],
+  creator: "Korevante Studio",
   openGraph: {
     type: "website",
     locale: "en_US",
-    url: "https://toolverse.ai",
-    title: "ToolVerse AI - 50+ All-in-One Tools Suite",
+    url: "https://korevante.com",
+    title: "Korevante Studio - 50+ All-in-One Tools Suite",
     description: "Premium SaaS platform with 50+ AI, Image, Video, PDF, and Productivity tools. 7-day free trial included.",
-    siteName: "ToolVerse AI",
+    siteName: "Korevante Studio",
   },
   twitter: {
     card: "summary_large_image",
-    title: "ToolVerse AI - 50+ Tools in One Subscription",
+    title: "Korevante Studio - 50+ Tools in One Subscription",
     description: "Modern, fast, and secure suite for creators, developers, and businesses.",
   },
   icons: {

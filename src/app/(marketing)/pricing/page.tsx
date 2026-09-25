@@ -98,7 +98,7 @@ const FAQS = [
   },
   {
     q: "What is your refund policy?",
-    a: "We offer a 7-day refund guarantee on your first subscription payment if you are not fully satisfied with our tools. Simply contact support@toolverse.ai with your order details.",
+    a: "We offer a 7-day refund guarantee on your first subscription payment if you are not fully satisfied with our tools. Simply contact support@korevante.com with your order details.",
   },
 ];
 
@@ -444,7 +444,7 @@ export default function PricingPage() {
           <div className="glass-card rounded-[3rem] p-10 md:p-16 relative overflow-hidden border-white/15 shadow-2xl">
             <div className="relative z-10 space-y-6">
               <h2 className="text-3xl sm:text-5xl font-black text-foreground leading-tight">
-                Try ToolVerse AI Free for 7 Days
+                Try Korevante Studio Free for 7 Days
               </h2>
               <p className="text-muted-foreground text-sm sm:text-base max-w-xl mx-auto font-medium">
                 Experience full, unrestricted access to 50+ cutting-edge tools. No credit card required.

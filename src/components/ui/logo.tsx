@@ -148,8 +148,8 @@ export function Logo({
       
       {showText && (
         <span className={cn("font-black tracking-[-0.03em] text-foreground flex items-center leading-none", currentSize.text, textClassName)}>
-          <span>ToolVerse</span>
-          <span className="ml-1.5 gradient-text-mint font-black">AI</span>
+          <span>Korevante</span>
+          <span className="ml-1.5 gradient-text-mint font-black">Studio</span>
         </span>
       )}
     </div>

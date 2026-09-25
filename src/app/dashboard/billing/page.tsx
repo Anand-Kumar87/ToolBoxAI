@@ -14,7 +14,7 @@ import {
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 
-export const metadata: Metadata = { title: "Billing & Subscription | ToolVerse AI" };
+export const metadata: Metadata = { title: "Billing & Subscription | Korevante Studio" };
 
 export default async function BillingPage() {
   const session = await getServerAuthSession();

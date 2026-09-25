@@ -7,7 +7,7 @@ import { Metadata } from "next";
 import { ProfileForm } from "@/components/dashboard/profile-form";
 
 export const metadata: Metadata = {
-  title: "Profile | ToolVerse AI",
+  title: "Profile | Korevante Studio",
   description: "Manage your personal profile, customize avatars, and security credentials.",
 };
 

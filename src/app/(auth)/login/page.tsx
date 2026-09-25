@@ -239,7 +239,7 @@ function LoginForm() {
           <Sparkles className="h-3 w-3" /> Secure Workspace Login
         </div>
         <h1 className="text-3xl sm:text-4xl font-black text-foreground tracking-tight mb-2">Welcome Back</h1>
-        <p className="text-sm text-muted-foreground font-medium">Sign in to your ToolVerse AI workspace</p>
+        <p className="text-sm text-muted-foreground font-medium">Sign in to your Korevante Studio workspace</p>
       </div>
 
       {/* Google OAuth Button */}

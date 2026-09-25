@@ -253,7 +253,7 @@ export async function processImageAction(toolSlug: string, formData: FormData) {
       }
 
       case "add-text-to-image": {
-        const text = (formData.get("text") as string) || "ToolVerse AI";
+        const text = (formData.get("text") as string) || "Korevante Studio";
         const position = (formData.get("position") as string) || "Bottom";
         const colorName = (formData.get("color") as string) || "White";
         const fontSize = parseInt(formData.get("fontSize") as string) || 48;
@@ -363,7 +363,7 @@ export async function processImageAction(toolSlug: string, formData: FormData) {
       }
 
       case "image-watermark-studio": {
-        const text = (formData.get("text") as string) || "© TOOLVERSE AI";
+        const text = (formData.get("text") as string) || "© KOREVANTE STUDIO";
         const style = (formData.get("style") as string) || "Diagonal Tiled";
         const opacityStr = (formData.get("opacity") as string) || "Medium";
         const colorName = (formData.get("color") as string) || "White";

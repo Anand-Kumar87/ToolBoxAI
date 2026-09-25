@@ -138,7 +138,7 @@ export default function FeaturesPage() {
           </h1>
 
           <p className="mt-6 text-base sm:text-xl text-muted-foreground max-w-2xl mx-auto leading-relaxed font-medium">
-            Stop switching between 15 different fragmented subscriptions. ToolVerse AI consolidates 50+ enterprise-grade tools into a single fast, private, and secure workspace.
+            Stop switching between 15 different fragmented subscriptions. Korevante Studio consolidates 50+ enterprise-grade tools into a single fast, private, and secure workspace.
           </p>
 
           {/* Luxury CTA Buttons */}

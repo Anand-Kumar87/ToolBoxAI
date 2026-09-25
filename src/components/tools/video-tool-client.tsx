@@ -393,7 +393,7 @@ export function VideoToolClient({ tool }: VideoToolClientProps) {
 
         ctx.textAlign = "right";
         ctx.fillStyle = "rgba(255, 255, 255, 0.75)";
-        ctx.fillText("TOOLVERSE CINEMATIC STUDIO", width - 20, height - 17);
+        ctx.fillText("KOREVANTE CINEMATIC STUDIO", width - 20, height - 17);
 
         currentFrame++;
         setProgressPercent(30 + Math.round((currentFrame / totalFrames) * 65));

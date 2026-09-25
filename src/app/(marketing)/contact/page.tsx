@@ -105,7 +105,7 @@ export default function ContactPage() {
                         Fastest way to connect for live support, queries, and quick onboarding.
                       </p>
                       <a 
-                        href="https://wa.me/919953467547?text=Hello%20ToolVerse%20AI%20Team" 
+                        href="https://wa.me/919953467547?text=Hello%20Korevante%20AI%20Team" 
                         target="_blank" 
                         rel="noreferrer"
                         className="inline-flex items-center gap-1.5 text-primary font-bold text-sm hover:underline"
@@ -153,7 +153,7 @@ export default function ContactPage() {
                     <div className="flex-1 min-w-0">
                       <h3 className="font-extrabold text-foreground text-base">Office &amp; Headquarters</h3>
                       <p className="text-xs text-muted-foreground mt-1 mb-2 font-medium">
-                        ToolVerse AI Operations Hub
+                        Korevante Studio Operations Hub
                       </p>
                       <p className="text-sm font-bold text-foreground leading-relaxed">
                         Anand Parbat, New Delhi - 110005, India

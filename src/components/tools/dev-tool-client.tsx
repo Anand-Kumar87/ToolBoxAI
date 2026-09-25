@@ -82,7 +82,7 @@ export function DevToolClient({ tool }: DevToolClientProps) {
     } else if (tool.slug === "safe-public-research") {
       setInput("github.com");
     } else if (tool.slug === "qr-code-generator") {
-      setInput("https://toolverse.ai");
+      setInput("https://korevante.com");
     } else if (tool.slug === "unit-converter") {
       setInput("100");
     } else if (tool.slug === "regex-studio") {
@@ -90,7 +90,7 @@ export function DevToolClient({ tool }: DevToolClientProps) {
       setOptions((p) => ({
         ...p,
         regexFlags: "gmi",
-        regexTestString: "Contact us at support@toolverse.ai or admin@google.com for assistance.",
+        regexTestString: "Contact us at support@korevante.com or admin@google.com for assistance.",
       }));
     } else if (tool.slug === "jwt-debugger") {
       setInput("eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJ1c2VyXzEyMzQ1IiwibmFtZSI6IkFsZXggV2Fsa2VyIiwiYWRtaW4iOnRydWUsImlhdCI6MTc3NDQ0NDgwMCwiZXhwIjoxODE2MDAwMDAwfQ.3l8w39g1Lz5-example_signature");
@@ -263,7 +263,7 @@ export function DevToolClient({ tool }: DevToolClientProps) {
         }
 
         case "qr-code-generator": {
-          const qrText = input.trim() || "https://toolverse.ai";
+          const qrText = input.trim() || "https://korevante.com";
           try {
             const dataUrl = await QRCode.toDataURL(qrText, {
               width: 512,

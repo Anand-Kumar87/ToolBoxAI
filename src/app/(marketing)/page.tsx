@@ -100,7 +100,7 @@ export default function MarketingPage() {
           >
             <span className="flex h-2 w-2 rounded-full bg-primary animate-pulse" />
             <Sparkles className="h-3.5 w-3.5 text-primary" />
-            <span className="text-foreground/90 group-hover:text-primary transition-colors">ToolVerse.ai is now fully live!</span>
+            <span className="text-foreground/90 group-hover:text-primary transition-colors">Korevante.ai is now fully live!</span>
             <ChevronRight className="h-3.5 w-3.5 text-primary/70 group-hover:translate-x-0.5 transition-transform" />
           </motion.div>
 
@@ -218,7 +218,7 @@ export default function MarketingPage() {
                 </div>
                 <div className="hidden sm:flex items-center gap-2 px-4 py-1 rounded-full bg-white/[0.05] border border-white/10 text-[11px] font-semibold text-slate-300">
                   <Lock className="h-3 w-3 text-emerald-400" />
-                  <span>app.toolverse.ai/workspace</span>
+                  <span>app.korevante.com/workspace</span>
                 </div>
                 <div className="flex items-center gap-2">
                   <span className="text-[10px] font-bold px-2.5 py-0.5 rounded-full border border-emerald-500/40 text-emerald-300 bg-emerald-500/15">

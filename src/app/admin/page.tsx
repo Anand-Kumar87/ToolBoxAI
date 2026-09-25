@@ -5,7 +5,7 @@ import { Box } from "lucide-react";
 import { AdminClient } from "@/components/admin/admin-client";
 
 export const metadata = {
-  title: "Admin Control Center | ToolVerse AI",
+  title: "Admin Control Center | Korevante Studio",
   description: "Executive administrative dashboard for user moderation, analytics, tool registry, and pricing management.",
 };
 

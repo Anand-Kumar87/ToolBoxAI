@@ -49,7 +49,7 @@ export default function ForgotPasswordPage() {
               <Sparkles className="h-5 w-5" />
             </div>
             <span className="text-xl font-bold tracking-tight">
-              ToolVerse <span className="text-primary">AI</span>
+              Korevante <span className="text-primary">AI</span>
             </span>
           </Link>
         </div>

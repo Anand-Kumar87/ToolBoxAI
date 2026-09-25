@@ -156,7 +156,7 @@ export async function processPdfAction(toolSlug: string, formData: FormData) {
           title: pdfDoc.getTitle() || "Untitled Document",
           author: pdfDoc.getAuthor() || "Unknown Author",
           subject: pdfDoc.getSubject() || "General Document",
-          creator: pdfDoc.getCreator() || "ToolVerse Studio",
+          creator: pdfDoc.getCreator() || "Korevante Studio",
           producer: pdfDoc.getProducer() || "PDF-Lib Engine",
           creationDate: pdfDoc.getCreationDate()?.toISOString() || new Date().toISOString(),
           modificationDate: pdfDoc.getModificationDate()?.toISOString() || new Date().toISOString(),
@@ -367,9 +367,9 @@ export async function processPdfAction(toolSlug: string, formData: FormData) {
 
         // Stamp security lock metadata into the protected document
         pdfDoc.setTitle(`[Encrypted] ${pdfDoc.getTitle() || file.name}`);
-        pdfDoc.setSubject("Protected by ToolVerse Enterprise Cryptographic Engine (AES-256)");
+        pdfDoc.setSubject("Protected by Korevante Enterprise Cryptographic Engine (AES-256)");
         pdfDoc.setKeywords(["encrypted", "password-protected", "secured"]);
-        pdfDoc.setProducer("ToolVerse Vault Security v2.5");
+        pdfDoc.setProducer("Korevante Vault Security v2.5");
 
         const protectedBytes = await pdfDoc.save({ useObjectStreams: true });
         resultBase64 = Buffer.from(protectedBytes).toString("base64");
@@ -430,8 +430,8 @@ export async function processPdfAction(toolSlug: string, formData: FormData) {
           .replace(/^\[Encrypted\]\s*/i, "")
           .replace(/^\[Protected\]\s*/i, "");
         unlockedDoc.setTitle(cleanTitle);
-        unlockedDoc.setSubject("Decrypted and unlocked via ToolVerse Master Engine (Unrestricted)");
-        unlockedDoc.setProducer("ToolVerse PDF Master Unlocker");
+        unlockedDoc.setSubject("Decrypted and unlocked via Korevante Master Engine (Unrestricted)");
+        unlockedDoc.setProducer("Korevante PDF Master Unlocker");
 
         const unlockedBytes = await unlockedDoc.save({ useObjectStreams: true });
         resultBase64 = Buffer.from(unlockedBytes).toString("base64");

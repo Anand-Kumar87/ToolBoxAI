@@ -113,7 +113,7 @@ export const authOptions: NextAuthOptions = {
         await prisma.notification.create({
           data: {
             userId: user.id,
-            title: "Welcome to ToolVerse AI! 🎉",
+            title: "Welcome to Korevante Studio! 🎉",
             message: `Your 7-day free trial is now active! Explore all 50+ tools and upgrade anytime to activate your subscription.`,
             type: "SUCCESS",
           },
@@ -174,6 +174,6 @@ export const authOptions: NextAuthOptions = {
     if (!s && process.env.NODE_ENV === "production") {
       throw new Error("FATAL SECURITY ERROR: NEXTAUTH_SECRET or AUTH_SECRET must be configured in production.");
     }
-    return s || "toolverse-default-secret-fallback-for-dev";
+    return s || "korevante-default-secret-fallback-for-dev";
   })(),
 };

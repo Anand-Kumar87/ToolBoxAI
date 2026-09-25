@@ -170,7 +170,7 @@ export async function checkUserAccessAndLimits(
   // If trial has expired and no subscription
   return {
     allowed: false,
-    reason: "Your 7-day trial has expired. Please choose a subscription plan to continue using ToolVerse AI.",
+    reason: "Your 7-day trial has expired. Please choose a subscription plan to continue using Korevante Studio.",
     plan: "NONE",
     trialDaysRemaining: 0,
   };

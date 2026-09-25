@@ -102,7 +102,7 @@ export function Preloader() {
               animate={{ opacity: 1, y: 0 }}
               className="text-xs sm:text-sm font-black tracking-[0.35em] text-white/90 uppercase mb-2"
             >
-              ToolVerse<span className="text-emerald-400">.ai</span>
+              Korevante<span className="text-emerald-400">.ai</span>
             </motion.h2>
 
             {/* Dynamic Status Ticker */}

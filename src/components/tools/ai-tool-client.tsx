@@ -180,7 +180,7 @@ export function AIToolClient({ tool, config }: AIToolClientProps) {
             {result && (result.startsWith("data:image/") || result.startsWith("http")) ? (
               <a
                 href={result}
-                download="toolverse-ai-image.jpg"
+                download="korevante-studio-image.jpg"
                 target="_blank"
                 rel="noreferrer"
                 className="inline-flex items-center gap-1.5 h-8 px-3 rounded-lg bg-primary text-primary-foreground text-xs font-medium hover:bg-primary/90 transition-colors shadow-sm"

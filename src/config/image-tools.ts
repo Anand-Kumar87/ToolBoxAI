@@ -86,7 +86,7 @@ export const IMAGE_TOOLS_CONFIG: Record<string, ImageToolConfig> = {
   "add-text-to-image": {
     slug: "add-text-to-image",
     fields: [
-      { name: "text", label: "Overlay Text", type: "text", placeholder: "e.g. ToolVerse Studio 2026" },
+      { name: "text", label: "Overlay Text", type: "text", placeholder: "e.g. Korevante Studio 2026" },
       { name: "position", label: "Text Position", type: "select", options: ["Bottom", "Center", "Top"], defaultValue: "Bottom" },
       { name: "color", label: "Text Color", type: "select", options: ["White", "Yellow", "Cyan", "Black"], defaultValue: "White" },
       { name: "fontSize", label: "Font Size (px)", type: "number", defaultValue: 48, placeholder: "48" },
@@ -108,7 +108,7 @@ export const IMAGE_TOOLS_CONFIG: Record<string, ImageToolConfig> = {
   "image-watermark-studio": {
     slug: "image-watermark-studio",
     fields: [
-      { name: "text", label: "Watermark Text / Brand", type: "text", defaultValue: "© TOOLVERSE AI", placeholder: "e.g. © 2026 CONFIDENTIAL" },
+      { name: "text", label: "Watermark Text / Brand", type: "text", defaultValue: "© KOREVANTE STUDIO", placeholder: "e.g. © 2026 CONFIDENTIAL" },
       { name: "style", label: "Watermark Style", type: "select", options: ["Diagonal Tiled (Full Coverage)", "Subtle Bottom Right", "Prominent Center Stamp"], defaultValue: "Diagonal Tiled (Full Coverage)" },
       { name: "opacity", label: "Opacity Level", type: "select", options: ["Light (15%)", "Medium (30%)", "Solid (60%)"], defaultValue: "Medium (30%)" },
       { name: "color", label: "Watermark Color", type: "select", options: ["White", "Black", "Red", "Cyan"], defaultValue: "White" },

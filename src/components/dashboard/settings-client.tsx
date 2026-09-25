@@ -131,7 +131,7 @@ export function SettingsClient({
       toast.success(
         customOpenAIKey.trim()
           ? "Custom OpenAI Key saved for this session"
-          : "Custom key removed. Using ToolVerse AI default keys."
+          : "Custom key removed. Using Korevante Studio default keys."
       );
     }, 600);
   };
@@ -272,7 +272,7 @@ export function SettingsClient({
                     Appearance & Theme
                   </CardTitle>
                   <CardDescription>
-                    Customize your visual environment. ToolVerse AI supports Obsidian Dark and Cyber Light modes.
+                    Customize your visual environment. Korevante Studio supports Obsidian Dark and Cyber Light modes.
                   </CardDescription>
                 </CardHeader>
                 <CardContent className="space-y-4">
@@ -388,7 +388,7 @@ export function SettingsClient({
                   Notification Preferences
                 </CardTitle>
                 <CardDescription>
-                  Choose how and when ToolVerse AI contacts you.
+                  Choose how and when Korevante Studio contacts you.
                 </CardDescription>
               </CardHeader>
               <CardContent className="space-y-4 divide-y divide-border/60">
@@ -536,7 +536,7 @@ export function SettingsClient({
           {/* 4. API & DEVELOPER TAB */}
           {activeTab === "api" && (
             <div className="space-y-6 animate-in fade-in duration-200">
-              {/* ToolVerse Personal Secret Key */}
+              {/* Korevante Personal Secret Key */}
               <Card className="border-border/80 shadow-sm">
                 <CardHeader>
                   <CardTitle className="text-lg flex items-center gap-2">
@@ -544,7 +544,7 @@ export function SettingsClient({
                     Developer API Key
                   </CardTitle>
                   <CardDescription>
-                    Use this key to authenticate programmatic API requests to ToolVerse AI endpoints.
+                    Use this key to authenticate programmatic API requests to Korevante Studio endpoints.
                   </CardDescription>
                 </CardHeader>
                 <CardContent className="space-y-4">

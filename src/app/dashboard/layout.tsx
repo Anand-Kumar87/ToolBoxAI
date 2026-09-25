@@ -5,7 +5,7 @@ import { DashboardSidebar } from "@/components/dashboard/sidebar";
 
 export const metadata: Metadata = {
   title: "Dashboard",
-  description: "Your ToolVerse AI workspace",
+  description: "Your Korevante Studio workspace",
 };
 
 export default async function DashboardLayout({

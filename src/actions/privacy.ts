@@ -71,7 +71,7 @@ const PLATFORM_DEFINITIONS = [
     check: async (u: string) => {
       try {
         const res = await fetch(`https://api.github.com/users/${u}`, {
-          headers: { "User-Agent": "ToolVerse-Privacy-Scanner" },
+          headers: { "User-Agent": "Korevante-Privacy-Scanner" },
           signal: AbortSignal.timeout(3500),
         });
         return res.status === 200 ? "ACTIVE" : "AVAILABLE";
@@ -88,7 +88,7 @@ const PLATFORM_DEFINITIONS = [
     check: async (u: string) => {
       try {
         const res = await fetch(`https://www.reddit.com/user/${u}/about.json`, {
-          headers: { "User-Agent": "Mozilla/5.0 ToolVerse-Auditor/1.0" },
+          headers: { "User-Agent": "Mozilla/5.0 Korevante-Auditor/1.0" },
           signal: AbortSignal.timeout(3500),
         });
         if (res.status === 200) {
@@ -490,7 +490,7 @@ export async function scanDataBreachExposureAction(targetInput: string): Promise
         const breachRes = await fetch(
           `https://api.xposedornot.com/v1/breach-analytics?email=${encodeURIComponent(query)}`,
           {
-            headers: { "User-Agent": "ToolVerse-Privacy-Scanner/1.0" },
+            headers: { "User-Agent": "Korevante-Privacy-Scanner/1.0" },
             signal: AbortSignal.timeout(8000),
           }
         );

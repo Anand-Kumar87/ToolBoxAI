@@ -153,7 +153,7 @@ export function AdminClient({
     const url = URL.createObjectURL(blob);
     const link = document.createElement("a");
     link.href = url;
-    link.download = `ToolVerse_Users_${new Date().toISOString().slice(0, 10)}.csv`;
+    link.download = `Korevante_Users_${new Date().toISOString().slice(0, 10)}.csv`;
     link.click();
     toast.success("Users CSV exported successfully!");
   };
@@ -174,7 +174,7 @@ export function AdminClient({
     const url = URL.createObjectURL(blob);
     const link = document.createElement("a");
     link.href = url;
-    link.download = `ToolVerse_Payments_${new Date().toISOString().slice(0, 10)}.csv`;
+    link.download = `Korevante_Payments_${new Date().toISOString().slice(0, 10)}.csv`;
     link.click();
     toast.success("Payments CSV exported successfully!");
   };

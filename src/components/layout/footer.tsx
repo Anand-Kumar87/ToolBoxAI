@@ -124,7 +124,7 @@ export function Footer() {
 
         {/* Bottom Bar */}
         <div className="pt-8 border-t border-border/30 flex flex-col sm:flex-row items-center justify-between text-xs text-muted-foreground font-semibold gap-4">
-          <p>© {new Date().getFullYear()} ToolVerse AI. All rights reserved. Built for creators worldwide.</p>
+          <p>© {new Date().getFullYear()} Korevante Studio. All rights reserved. Built for creators worldwide.</p>
           <div className="flex items-center space-x-4">
             <span className="inline-flex items-center gap-1.5">
               <span className="h-2 w-2 rounded-full bg-emerald-500 animate-pulse"></span>

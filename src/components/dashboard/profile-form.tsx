@@ -40,7 +40,7 @@ import {
 import { cn } from "@/lib/utils";
 
 const AVATAR_PRESETS = [
-  { id: "robot", name: "Cyber AI Robot", url: "https://api.dicebear.com/7.x/bottts/svg?seed=ToolverseAI" },
+  { id: "robot", name: "Cyber AI Robot", url: "https://api.dicebear.com/7.x/bottts/svg?seed=KorevanteAI" },
   { id: "designer", name: "3D Designer", url: "https://api.dicebear.com/7.x/personas/svg?seed=CreatorPro" },
   { id: "ninja", name: "Cyber Ninja", url: "https://api.dicebear.com/7.x/lorelei/svg?seed=CyberNinja" },
   { id: "leader", name: "Tech Leader", url: "https://api.dicebear.com/7.x/avataaars/svg?seed=TechLeader" },
@@ -273,7 +273,7 @@ export function ProfileForm({ initialData }: ProfileFormProps) {
             <div className="flex-1 text-center md:text-left space-y-3 min-w-0">
               <div className="flex flex-wrap items-center justify-center md:justify-start gap-2.5">
                 <h2 className="text-2xl sm:text-3xl font-black text-foreground tracking-tight truncate">
-                  {profile.name || "ToolVerse Creator"}
+                  {profile.name || "Korevante Creator"}
                 </h2>
                 {initialData.role === "ADMIN" && (
                   <Badge variant="warning" className="px-2.5 py-0.5 font-bold text-xs gap-1">
@@ -446,7 +446,7 @@ export function ProfileForm({ initialData }: ProfileFormProps) {
                 value={profile.bio}
                 onChange={(e) => setProfile((p) => ({ ...p, bio: e.target.value }))}
                 disabled={profileLoading}
-                placeholder="Tell us about yourself, your creative projects, and how you use ToolVerse AI..."
+                placeholder="Tell us about yourself, your creative projects, and how you use Korevante Studio..."
                 maxLength={200}
                 rows={3}
                 className="w-full rounded-xl border border-border/80 bg-background/80 px-4 py-3 text-sm font-medium text-foreground placeholder:text-muted-foreground/60 focus:outline-none focus:ring-2 focus:ring-primary/40 focus:border-primary transition-all resize-none"

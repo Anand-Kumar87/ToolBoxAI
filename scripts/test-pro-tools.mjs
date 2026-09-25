@@ -174,7 +174,7 @@ async function testPdfPassword() {
     const p = doc.addPage([400, 400]);
     p.drawText("Classified Financial Records");
     doc.setTitle("[Encrypted] Financial Statements");
-    doc.setSubject("Protected by ToolVerse Enterprise Cryptographic Engine (AES-256)");
+    doc.setSubject("Protected by Korevante Enterprise Cryptographic Engine (AES-256)");
     const lockedBytes = await doc.save({ useObjectStreams: true });
     assert(lockedBytes.byteLength > 0, "PDF document encrypted and security headers sealed");
   } catch (e) {
@@ -188,11 +188,11 @@ function testRegexStudio() {
   try {
     const pattern = "^([a-zA-Z0-9_\\-\\.]+)@([a-zA-Z0-9_\\-\\.]+)\\.([a-zA-Z]{2,5})$";
     const flags = "gmi";
-    const testText = "Send mail to founder@toolverse.ai or support@google.com";
+    const testText = "Send mail to founder@korevante.com or support@google.com";
     const re = new RegExp(/([a-zA-Z0-9_\\-\\.]+)@([a-zA-Z0-9_\\-\\.]+)\.([a-zA-Z]{2,5})/g);
     const matches = [...testText.matchAll(re)];
     assert(matches.length === 2, `Regex engine detected ${matches.length} matches correctly`);
-    assert(matches[0][0] === "founder@toolverse.ai", `First match correctly extracted: ${matches[0][0]}`);
+    assert(matches[0][0] === "founder@korevante.com", `First match correctly extracted: ${matches[0][0]}`);
   } catch (e) {
     assert(false, `Regex studio failed: ${e.message}`);
   }

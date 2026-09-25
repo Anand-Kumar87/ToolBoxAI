@@ -5,8 +5,8 @@ import { Button } from "@/components/ui/button";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "About ToolVerse AI - Our Mission & Story",
-  description: "Learn about ToolVerse AI's mission to consolidate 50+ high-performance AI, image, video, and PDF tools into one ultra-fast, affordable platform.",
+  title: "About Korevante Studio - Our Mission & Story",
+  description: "Learn about Korevante Studio's mission to consolidate 50+ high-performance AI, image, video, and PDF tools into one ultra-fast, affordable platform.",
 };
 
 export default function AboutPage() {
@@ -31,7 +31,7 @@ export default function AboutPage() {
           </h1>
 
           <p className="text-muted-foreground text-base sm:text-xl max-w-2xl mx-auto leading-relaxed font-medium">
-            ToolVerse AI was born out of frustration with fragmented SaaS ecosystems — where freelancers, developers, and creators are forced to pay for 10 separate subscriptions just to get their daily work done.
+            Korevante Studio was born out of frustration with fragmented SaaS ecosystems — where freelancers, developers, and creators are forced to pay for 10 separate subscriptions just to get their daily work done.
           </p>
         </div>
       </section>
@@ -56,7 +56,7 @@ export default function AboutPage() {
                   Historically, enterprise-grade AI models, server-side video compression, high-resolution upscaling, and programmatic PDF manipulation required either expensive recurring subscriptions or deep DevOps expertise.
                 </p>
                 <p>
-                  ToolVerse AI completely disrupts this standard. Every single tool in our ecosystem is built natively to production specifications, secured by enterprise cryptography, and priced transparently starting at just ₹150 per month.
+                  Korevante Studio completely disrupts this standard. Every single tool in our ecosystem is built natively to production specifications, secured by enterprise cryptography, and priced transparently starting at just ₹150 per month.
                 </p>
                 <p>
                   Whether you are an independent creator in Mumbai, a product designer in Bengaluru, or an engineer in New Delhi, you deserve equal access to cutting-edge tools without artificial paywalls.
@@ -166,7 +166,7 @@ export default function AboutPage() {
               { 
                 icon: Zap, 
                 title: "Zero Fake Buttons", 
-                desc: "We never ship placeholder UIs or artificial 'coming soon' buttons for marketing hype. If a tool appears on ToolVerse AI, it is 100% active, tested, and ready to use." 
+                desc: "We never ship placeholder UIs or artificial 'coming soon' buttons for marketing hype. If a tool appears on Korevante Studio, it is 100% active, tested, and ready to use." 
               },
               { 
                 icon: Heart, 

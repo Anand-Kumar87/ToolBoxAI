@@ -4,8 +4,8 @@ import { Shield, Lock, Eye, Database, Globe, UserCheck, Mail, ArrowLeft } from "
 import { Badge } from "@/components/ui/badge";
 
 export const metadata: Metadata = { 
-  title: "Privacy Policy | ToolVerse AI",
-  description: "Learn how ToolVerse AI collects, protects, and handles your personal information and uploaded files.",
+  title: "Privacy Policy | Korevante Studio",
+  description: "Learn how Korevante Studio collects, protects, and handles your personal information and uploaded files.",
 };
 
 const SECTIONS = [
@@ -42,7 +42,7 @@ const SECTIONS = [
     content: (
       <>
         <p className="mb-3">
-          ToolVerse AI adheres to a strict data-minimization philosophy. We use collected information exclusively to:
+          Korevante Studio adheres to a strict data-minimization philosophy. We use collected information exclusively to:
         </p>
         <ul className="list-disc pl-5 space-y-2 mb-3">
           <li>Deliver, execute, and render the outputs of our 50+ AI, Image, Video, PDF, and Developer tools.</li>
@@ -64,7 +64,7 @@ const SECTIONS = [
     content: (
       <>
         <p className="mb-3">
-          A fundamental principle of ToolVerse AI is that <strong>you retain 100% full intellectual property ownership</strong> of all files, text, images, code, and prompts you input into our tools, as well as the resulting generated outputs.
+          A fundamental principle of Korevante Studio is that <strong>you retain 100% full intellectual property ownership</strong> of all files, text, images, code, and prompts you input into our tools, as well as the resulting generated outputs.
         </p>
         <p className="mb-3">
           <strong>No Training on Customer Data:</strong> We do NOT use your private inputs, uploaded documents, generated media, or proprietary scripts to train, fine-tune, or calibrate public AI foundation models. All third-party AI requests (such as OpenAI or Anthropic APIs) are dispatched via zero-retention enterprise API endpoints.
@@ -120,7 +120,7 @@ const SECTIONS = [
     content: (
       <>
         <p className="mb-3">
-          ToolVerse AI uses strictly necessary first-party cookies to manage active authentication tokens (NextAuth JWT session cookies) and store your interface preferences (such as Light/Dark mode state).
+          Korevante Studio uses strictly necessary first-party cookies to manage active authentication tokens (NextAuth JWT session cookies) and store your interface preferences (such as Light/Dark mode state).
         </p>
         <p>
           We do NOT employ invasive cross-site tracking cookies, behavioral tracking pixels, or third-party fingerprinting scripts.
@@ -138,8 +138,8 @@ const SECTIONS = [
           If you have questions, feedback, or requests regarding this Privacy Policy or your data rights, please contact our dedicated Data Protection Officer:
         </p>
         <div className="neu-pressed p-4 rounded-2xl space-y-1 text-sm">
-          <p><strong>Email:</strong> <a href="mailto:privacy@toolverse.ai" className="text-primary hover:underline">privacy@toolverse.ai</a></p>
-          <p><strong>Support Desk:</strong> <Link href="/contact" className="text-primary hover:underline">toolverse.ai/contact</Link></p>
+          <p><strong>Email:</strong> <a href="mailto:privacy@korevante.com" className="text-primary hover:underline">privacy@korevante.com</a></p>
+          <p><strong>Support Desk:</strong> <Link href="/contact" className="text-primary hover:underline">korevante.com/contact</Link></p>
           <p><strong>Response SLA:</strong> We respond to all formal data inquiries within 48 business hours.</p>
         </div>
       </>

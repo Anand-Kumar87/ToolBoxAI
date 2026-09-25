@@ -5,7 +5,7 @@ import { prisma } from "@/lib/prisma";
 import { SettingsClient } from "@/components/dashboard/settings-client";
 
 export const metadata: Metadata = {
-  title: "Settings | ToolVerse AI",
+  title: "Settings | Korevante Studio",
   description: "Manage your account settings, preferences, and developer API keys.",
 };
 
