@@ -1,0 +1,311 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+// -----------------------------------------------------------------------------
+// Enums replaced with Strings for SQLite compatibility
+// -----------------------------------------------------------------------------
+
+model User {
+  id            String    @id @default(cuid())
+  name          String?
+  email         String?   @unique
+  emailVerified DateTime?
+  password      String?
+  image         String?
+  role          String    @default("USER") // USER, ADMIN
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  accounts      Account[]
+  sessions      Session[]
+  profile       Profile?
+  subscriptions Subscription[]
+  trial         Trial?
+  payments      Payment[]
+  toolUsages    ToolUsage[]
+  projects      Project[]
+  files         File[]
+  jobs          ProcessingJob[]
+  aiRequests    AIRequest[]
+  auditLogs     AuditLog[]
+  notifications Notification[]
+
+  @@index([email])
+}
+
+model Profile {
+  id        String   @id @default(cuid())
+  userId    String   @unique
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  bio       String?
+  phone     String?
+  company   String?
+  avatarUrl String?
+  theme     String   @default("system")
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Account {
+  id                String  @id @default(cuid())
+  userId            String
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String?
+  access_token      String?
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String?
+  session_state     String?
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+  @@index([userId])
+}
+
+model Session {
+  id           String   @id @default(cuid())
+  sessionToken String   @unique
+  userId       String
+  expires      DateTime
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+}
+
+model VerificationToken {
+  identifier String
+  token      String   @unique
+  expires    DateTime
+
+  @@unique([identifier, token])
+}
+
+model Plan {
+  id                String         @id @default(cuid())
+  name              String         @unique // BASIC, PRO, PREMIUM
+  title             String
+  description       String
+  price             Float
+  currency          String         @default("INR")
+  billingInterval   String         @default("monthly")
+  aiRequestLimit    Int
+  fileUploadLimit   Int
+  videoProcessLimit Int
+  storageLimitMb    Int
+  features          String         // SQLite workaround for Json
+  isActive          Boolean        @default(true)
+  createdAt         DateTime       @default(now())
+  updatedAt         DateTime       @updatedAt
+  subscriptions     Subscription[]
+}
+
+model Subscription {
+  id                    String             @id @default(cuid())
+  userId                String
+  user                  User               @relation(fields: [userId], references: [id], onDelete: Cascade)
+  planId                String
+  plan                  Plan               @relation(fields: [planId], references: [id])
+  status                String             @default("ACTIVE") // ACTIVE, CANCELED, PAST_DUE
+  currentPeriodStart    DateTime
+  currentPeriodEnd      DateTime
+  cancelAtPeriodEnd     Boolean            @default(false)
+  razorpaySubscriptionId String?          @unique
+  razorpayCustomerId   String?
+  createdAt             DateTime           @default(now())
+  updatedAt             DateTime           @updatedAt
+  payments              Payment[]
+
+  @@index([userId])
+  @@index([status])
+}
+
+model Trial {
+  id             String      @id @default(cuid())
+  userId         String      @unique
+  user           User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  trialStartDate DateTime    @default(now())
+  trialEndDate   DateTime
+  trialStatus    String      @default("ACTIVE") // ACTIVE, EXPIRED
+  createdAt      DateTime    @default(now())
+  updatedAt      DateTime    @updatedAt
+
+  @@index([userId])
+  @@index([trialStatus])
+}
+
+model Payment {
+  id             String        @id @default(cuid())
+  userId         String
+  user           User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  subscriptionId String?
+  subscription   Subscription? @relation(fields: [subscriptionId], references: [id], onDelete: SetNull)
+  orderId        String        @unique
+  paymentId      String?       @unique
+  amount         Float
+  currency       String        @default("INR")
+  status         String        @default("PENDING") // PENDING, SUCCESS, FAILED
+  method         String?
+  signature      String?
+  metadata       String?       // SQLite workaround for Json
+  createdAt      DateTime      @default(now())
+  updatedAt      DateTime      @updatedAt
+
+  @@index([userId])
+  @@index([orderId])
+  @@index([status])
+}
+
+model Tool {
+  id           String       @id @default(cuid())
+  slug         String       @unique
+  name         String
+  description  String
+  category     String       // AI, IMAGE, VIDEO, PDF, DEVELOPER, PRODUCTIVITY
+  planRequired String       @default("BASIC")
+  icon         String
+  isFeatured   Boolean      @default(false)
+  isActive     Boolean      @default(true)
+  createdAt    DateTime     @default(now())
+  updatedAt    DateTime     @updatedAt
+  usages       ToolUsage[]
+  jobs         ProcessingJob[]
+
+  @@index([slug])
+  @@index([category])
+}
+
+model ToolUsage {
+  id             String       @id @default(cuid())
+  userId         String
+  user           User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+  toolId         String?
+  tool           Tool?        @relation(fields: [toolId], references: [id], onDelete: SetNull)
+  toolSlug       String
+  category       String
+  tokensUsed     Int          @default(0)
+  executionTimeMs Int         @default(0)
+  status         String       @default("SUCCESS")
+  metadata       String?      // SQLite workaround for Json
+  createdAt      DateTime     @default(now())
+
+  @@index([userId])
+  @@index([toolSlug])
+  @@index([createdAt])
+}
+
+model Project {
+  id          String   @id @default(cuid())
+  userId      String
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  name        String
+  description String?
+  category    String?
+  data        String?  // SQLite workaround for Json
+  isArchived  Boolean  @default(false)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  files       File[]
+
+  @@index([userId])
+  @@index([createdAt])
+}
+
+model File {
+  id           String   @id @default(cuid())
+  userId       String
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  projectId    String?
+  project      Project? @relation(fields: [projectId], references: [id], onDelete: SetNull)
+  fileName     String
+  originalName String
+  mimeType     String
+  sizeBytes    Int
+  storageKey   String   @unique
+  url          String
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  @@index([userId])
+  @@index([projectId])
+}
+
+model ProcessingJob {
+  id            String    @id @default(cuid())
+  userId        String
+  user          User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  toolId        String?
+  tool          Tool?     @relation(fields: [toolId], references: [id], onDelete: SetNull)
+  toolSlug      String
+  status        String    @default("PENDING") // PENDING, PROCESSING, COMPLETED, FAILED
+  progress      Int       @default(0)
+  inputMetadata String?   // SQLite workaround for Json
+  outputMetadata String?  // SQLite workaround for Json
+  error         String?
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  @@index([userId])
+  @@index([status])
+  @@index([createdAt])
+}
+
+model AIRequest {
+  id               String   @id @default(cuid())
+  userId           String
+  user             User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  toolSlug         String
+  prompt           String
+  response         String
+  modelUsed        String
+  tokensPrompt     Int      @default(0)
+  tokensCompletion Int      @default(0)
+  durationMs       Int      @default(0)
+  createdAt        DateTime @default(now())
+
+  @@index([userId])
+  @@index([toolSlug])
+  @@index([createdAt])
+}
+
+model AuditLog {
+  id        String   @id @default(cuid())
+  userId    String?
+  user      User?    @relation(fields: [userId], references: [id], onDelete: SetNull)
+  action    String
+  resource  String
+  ipAddress String?
+  userAgent String?
+  metadata  String?  // SQLite workaround for Json
+  createdAt DateTime @default(now())
+
+  @@index([userId])
+  @@index([action])
+  @@index([createdAt])
+}
+
+model Notification {
+  id        String           @id @default(cuid())
+  userId    String
+  user      User             @relation(fields: [userId], references: [id], onDelete: Cascade)
+  title     String
+  message   String
+  type      String           @default("INFO") // INFO, SUCCESS, WARNING, ERROR
+  isRead    Boolean          @default(false)
+  link      String?
+  createdAt DateTime         @default(now())
+
+  @@index([userId])
+  @@index([isRead])
+  @@index([createdAt])
+}

@@ -1,0 +1,50 @@
+# dependencies
+/node_modules
+/.pnp
+.pnp.js
+.yarn/cache
+
+# testing
+/coverage
+
+# next.js
+/.next/
+/out/
+
+# production
+/build
+
+# misc
+.DS_Store
+Thumbs.db
+*.pem
+
+# database
+*.db
+*.db-journal
+*.sqlite
+*.sqlite3
+
+# debug
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# local env files (never commit real secrets)
+.env
+.env*.local
+.env.production
+.env.development
+.env.*
+!.env.example
+
+# user uploaded media (never commit user uploads)
+/public/uploads/*
+!/public/uploads/.gitkeep
+
+# vercel
+.vercel
+
+# typescript
+*.tsbuildinfo
+next-env.d.ts
