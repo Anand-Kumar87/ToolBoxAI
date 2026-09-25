@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Plus_Jakarta_Sans, Outfit } from "next/font/google";
 import "./globals.css";
 import { Providers } from "@/components/providers";
+import { CookieBanner } from "@/components/layout/cookie-banner";
 
 const sansFont = Plus_Jakarta_Sans({
   subsets: ["latin"],
@@ -64,7 +65,10 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning className={`${sansFont.variable} ${headingFont.variable}`}>
       <body className="min-h-screen bg-background font-sans text-foreground antialiased selection:bg-emerald-500/20 selection:text-emerald-400">
-        <Providers>{children}</Providers>
+        <Providers>
+          {children}
+          <CookieBanner />
+        </Providers>
       </body>
     </html>
   );

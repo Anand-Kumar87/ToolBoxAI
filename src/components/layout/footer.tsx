@@ -1,5 +1,7 @@
+"use client";
+
 import Link from "next/link";
-import { Sparkles, Shield, Zap, CheckCircle2 } from "lucide-react";
+import { Sparkles, Shield, Zap, CheckCircle2, Cookie } from "lucide-react";
 import { Logo } from "@/components/ui/logo";
 
 export function Footer() {
@@ -116,6 +118,20 @@ export function Footer() {
                 <Link href="/refund" className="hover:text-primary transition-colors">
                   Refund Policy
                 </Link>
+              </li>
+              <li>
+                <button
+                  type="button"
+                  onClick={() => {
+                    if (typeof window !== "undefined") {
+                      window.dispatchEvent(new Event("open-cookie-preferences"));
+                    }
+                  }}
+                  className="hover:text-primary transition-colors text-left flex items-center gap-1.5 cursor-pointer"
+                >
+                  <Cookie className="h-3.5 w-3.5 opacity-70" />
+                  Cookie Preferences
+                </button>
               </li>
             </ul>
           </div>
