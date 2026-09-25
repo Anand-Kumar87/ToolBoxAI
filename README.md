@@ -58,8 +58,8 @@ Korevante Studio is a comprehensive, production-ready SaaS platform offering 50+
 ## 🔐 Admin Access
 
 The database seed script automatically creates an admin account:
-* **Email**: `admin@korevante.com`
-* **Password**: `Admin@1234`
+* **Email**: `admin@k5orevante.com`
+* **Password**: `Admin@81234`
 * **Plan**: PREMIUM
 
 Login with these credentials and navigate to the **Admin Center** via the sidebar.
