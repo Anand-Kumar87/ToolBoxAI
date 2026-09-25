@@ -178,7 +178,15 @@ async function main() {
     { slug: "unit-converter", name: "Multi-Category Unit Converter", description: "Convert Length, Weight, Temperature, Speed, and Storage units.", category: "PRODUCTIVITY" as const, planRequired: "BASIC" , icon: "ArrowLeftRight" },
     { slug: "color-picker", name: "Color Converter & Palette Studio", description: "Convert between HEX, RGB, HSL and analyze color contrast.", category: "PRODUCTIVITY" as const, planRequired: "BASIC" , icon: "Pipette" },
     { slug: "text-case-converter", name: "Text Case Converter", description: "Convert text to UPPERCASE, lowercase, Title Case, camelCase, snake_case.", category: "PRODUCTIVITY" as const, planRequired: "BASIC" , icon: "CaseSensitive" },
-    { slug: "safe-public-research", name: "Public Domain & Network Research", description: "Privacy-respecting lookup for domain DNS records and website metadata.", category: "UTILITIES" as const, planRequired: "PRO" , icon: "Globe" },
+    { slug: "safe-public-research", name: "Domain & Website Lookup", description: "Look up website DNS records, server IP, hosting provider, and domain info.", category: "UTILITIES" as const, planRequired: "PRO" , icon: "Globe" },
+    { slug: "watermark-remover", name: "Remove Watermark from Photo", description: "Select or mark any watermark, logo, or text on a photo to blur or remove it completely.", category: "IMAGE" as const, planRequired: "PRO", icon: "Eraser", isFeatured: true },
+    { slug: "image-watermark-studio", name: "Add Watermark to Photo", description: "Add custom text, copyright stamps, or diagonal watermarks to photos.", category: "IMAGE" as const, planRequired: "BASIC", icon: "Stamp" },
+    { slug: "ai-video-generator", name: "AI Video Generator", description: "Generate smooth 10-second MP4 videos from text prompts, images, or web references.", category: "VIDEO" as const, planRequired: "PREMIUM", icon: "Video", isFeatured: true },
+    { slug: "pdf-watermark-stamp", name: "Add Watermark to PDF", description: "Add custom text, stamps, or diagonal watermarks across all PDF pages.", category: "PDF" as const, planRequired: "BASIC", icon: "FileCheck2" },
+    { slug: "pdf-unlocker", name: "Unlock PDF (Remove Password)", description: "Remove password encryption and unlock PDF restrictions securely.", category: "PDF" as const, planRequired: "PRO", icon: "Unlock", isFeatured: true },
+    { slug: "ip-telecom-intel", name: "IP & Phone Number Lookup", description: "Look up IP address location and phone number country, carrier, and line details. (Admin restricted).", category: "UTILITIES" as const, planRequired: "PRO", icon: "ShieldAlert" },
+    { slug: "social-footprint-scanner", name: "Find Social Media Accounts", description: "Check which social media platforms a username is registered on, and inspect photo GPS location.", category: "UTILITIES" as const, planRequired: "PRO", icon: "UserCheck", isFeatured: true },
+    { slug: "data-breach-scanner", name: "Check Leaked Email & Passwords", description: "Check if your email or phone number has been exposed in public data leaks and hacks.", category: "UTILITIES" as const, planRequired: "PRO", icon: "Fingerprint", isFeatured: true },
   ];
 
   for (const tool of toolsData) {
@@ -194,13 +202,16 @@ async function main() {
   // ─── 3. SEED ADMIN USER ───────────────────────────────────────────
   console.log("👤 Seeding admin user...");
 
-  const adminEmail = process.env.ADMIN_EMAIL || "admin@korevante.com";
-  const adminPassword = process.env.ADMIN_PASSWORD || "Admin@Korevante2024!";
+  const adminEmail = process.env.ADMIN_EMAIL || "admin@k5orevante.com";
+  const adminPassword = process.env.ADMIN_PASSWORD || "Admin@81234";
   const hashedPassword = await bcrypt.hash(adminPassword, 12);
 
   const adminUser = await prisma.user.upsert({
     where: { email: adminEmail },
-    update: {},
+    update: {
+      password: hashedPassword,
+      role: "ADMIN",
+    },
     create: {
       name: "Korevante Admin",
       email: adminEmail,
@@ -242,7 +253,7 @@ async function main() {
   }
 
   console.log(`   ✅ Admin user seeded: ${adminEmail}`);
-  console.log(`   ℹ️  Admin password: ${adminPassword} (change in production!)`);
+  console.log(`   ℹ️  Admin password: ${adminPassword} (configured for production)`);
 
   console.log("\n✅ Database seeding complete!");
 }
