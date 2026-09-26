@@ -127,13 +127,13 @@ function ToolsContent() {
       {/* Category Filters */}
       <section className="sticky top-16 z-30 bg-background/90 backdrop-blur-lg border-b border-border/60">
         <div className="container mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center gap-2 overflow-x-auto py-3 scrollbar-hide">
+          <div className="flex items-center gap-2 overflow-x-auto py-3 scrollbar-hide touch-pan-x" style={{ WebkitOverflowScrolling: "touch" }}>
             {CATEGORIES.map((cat) => (
               <button
                 key={cat.value}
                 onClick={() => setActiveCategory(cat.value)}
                 className={cn(
-                  "flex-shrink-0 px-4 py-2 rounded-full text-sm font-medium transition-all duration-150 border",
+                  "flex-shrink-0 px-4 py-2 rounded-full text-sm font-semibold transition-all duration-150 border touch-manipulation cursor-pointer select-none active:scale-95",
                   activeCategory === cat.value
                     ? "bg-primary text-primary-foreground border-primary shadow-sm"
                     : "border-border text-muted-foreground hover:border-primary/50 hover:text-foreground bg-background"

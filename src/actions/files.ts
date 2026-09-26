@@ -29,12 +29,6 @@ export async function uploadFileAction(formData: FormData): Promise<FileActionRe
       return { success: false, error: "File exceeds 50 MB limit." };
     }
 
-    // Prepare upload directory
-    const userUploadDir = path.join(process.cwd(), "public", "uploads", userId);
-    if (!fs.existsSync(userUploadDir)) {
-      fs.mkdirSync(userUploadDir, { recursive: true });
-    }
-
     // Clean filename and prevent path traversal
     const baseName = path.basename(file.name);
     let sanitizedName = baseName.replace(/[^a-zA-Z0-9._-]/g, "_");
@@ -52,14 +46,27 @@ export async function uploadFileAction(formData: FormData): Promise<FileActionRe
     }
 
     const uniqueKey = `${Date.now()}-${sanitizedName}`;
-    const filePath = path.join(userUploadDir, uniqueKey);
 
-    // Write file to disk
+    // Read file bytes
     const arrayBuffer = await file.arrayBuffer();
     const buffer = Buffer.from(arrayBuffer);
-    await fs.promises.writeFile(filePath, buffer);
 
-    const publicUrl = `/uploads/${userId}/${uniqueKey}`;
+    let publicUrl = "";
+
+    // Attempt to write to local disk if writable (Docker, self-hosted VPS, local dev)
+    try {
+      const userUploadDir = path.join(process.cwd(), "public", "uploads", userId);
+      if (!fs.existsSync(userUploadDir)) {
+        fs.mkdirSync(userUploadDir, { recursive: true });
+      }
+      const filePath = path.join(userUploadDir, uniqueKey);
+      await fs.promises.writeFile(filePath, buffer);
+      publicUrl = `/uploads/${userId}/${uniqueKey}`;
+    } catch {
+      // Running on read-only serverless environment (e.g. Vercel Lambda)
+      // Store as standard base64 data URL so file is accessible anywhere
+      publicUrl = `data:${file.type || "application/octet-stream"};base64,${buffer.toString("base64")}`;
+    }
 
     // Create database entry
     const fileRecord = await prisma.file.create({

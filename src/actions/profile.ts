@@ -133,14 +133,18 @@ export async function uploadAvatarAction(formData: FormData): Promise<ActionResu
     const bytes = await file.arrayBuffer();
     const buffer = Buffer.from(bytes);
 
-    const uploadsDir = path.join(process.cwd(), "public", "uploads", "avatars");
-    await fs.mkdir(uploadsDir, { recursive: true });
-
-    const filename = `${userId}-${Date.now()}${safeExt}`;
-    const filePath = path.join(uploadsDir, filename);
-
-    await fs.writeFile(filePath, buffer);
-    const publicUrl = `/uploads/avatars/${filename}`;
+    let publicUrl = "";
+    try {
+      const uploadsDir = path.join(process.cwd(), "public", "uploads", "avatars");
+      await fs.mkdir(uploadsDir, { recursive: true });
+      const filename = `${userId}-${Date.now()}${safeExt}`;
+      const filePath = path.join(uploadsDir, filename);
+      await fs.writeFile(filePath, buffer);
+      publicUrl = `/uploads/avatars/${filename}`;
+    } catch {
+      // Serverless fallback for Vercel/AWS Lambda
+      publicUrl = `data:${file.type};base64,${buffer.toString("base64")}`;
+    }
 
     await prisma.$transaction([
       prisma.user.update({

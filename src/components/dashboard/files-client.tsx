@@ -13,6 +13,7 @@ import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { formatDate } from "@/lib/utils";
 import { uploadFileAction, deleteFileAction } from "@/actions/files";
+import { optimizeImageForUpload } from "@/lib/image-optimizer-client";
 
 interface FileItem {
   id: string;
@@ -80,12 +81,23 @@ export function FilesClient({ initialFiles }: FilesClientProps) {
     const selected = e.target.files?.[0];
     if (!selected) return;
 
-    const formData = new FormData();
-    formData.append("file", selected);
-
     setIsUploading(true);
     const toastId = toast.loading(`Uploading ${selected.name}...`);
+
     try {
+      let fileToUpload = selected;
+      if (selected.type.startsWith("image/") && selected.size > 2.5 * 1024 * 1024) {
+        toast.loading("Optimizing image for fast upload...", { id: toastId });
+        try {
+          fileToUpload = await optimizeImageForUpload(selected, 2048, 0.88);
+        } catch {
+          fileToUpload = selected;
+        }
+      }
+
+      const formData = new FormData();
+      formData.append("file", fileToUpload);
+
       const res = await uploadFileAction(formData);
       if (res.success) {
         toast.success(res.message, { id: toastId });
@@ -93,8 +105,9 @@ export function FilesClient({ initialFiles }: FilesClientProps) {
       } else {
         toast.error(res.error, { id: toastId });
       }
-    } catch {
-      toast.error("Upload failed", { id: toastId });
+    } catch (err: any) {
+      console.error("[handleFileChange]", err);
+      toast.error(err?.message || "Upload failed. Please try again.", { id: toastId });
     } finally {
       setIsUploading(false);
       if (fileInputRef.current) fileInputRef.current.value = "";
@@ -207,11 +220,11 @@ export function FilesClient({ initialFiles }: FilesClientProps) {
             <table className="w-full text-sm text-left">
               <thead className="text-xs text-muted-foreground uppercase bg-muted/20 border-b border-border/50">
                 <tr>
-                  <th className="px-6 py-3.5 font-black">Asset Name</th>
-                  <th className="px-6 py-3.5 font-black">Format</th>
-                  <th className="px-6 py-3.5 font-black">Size</th>
-                  <th className="px-6 py-3.5 font-black">Uploaded</th>
-                  <th className="px-6 py-3.5 font-black text-right">Actions</th>
+                  <th className="px-3 sm:px-6 py-3 font-black">Asset Name</th>
+                  <th className="hidden sm:table-cell px-3 sm:px-6 py-3 font-black">Format</th>
+                  <th className="px-3 sm:px-6 py-3 font-black">Size</th>
+                  <th className="hidden md:table-cell px-3 sm:px-6 py-3 font-black">Uploaded</th>
+                  <th className="px-3 sm:px-6 py-3 font-black text-right">Actions</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-border/30">
@@ -220,12 +233,12 @@ export function FilesClient({ initialFiles }: FilesClientProps) {
                     key={file.id}
                     className="hover:bg-muted/15 transition-colors group"
                   >
-                    <td className="px-6 py-4 font-bold text-foreground flex items-center gap-3">
-                      <div className="h-10 w-10 rounded-xl bg-gradient-to-tr from-card to-muted border border-border/60 flex items-center justify-center shrink-0">
+                    <td className="px-3 sm:px-6 py-3 font-bold text-foreground flex items-center gap-2.5 sm:gap-3">
+                      <div className="h-9 w-9 sm:h-10 sm:w-10 rounded-xl bg-gradient-to-tr from-card to-muted border border-border/60 flex items-center justify-center shrink-0">
                         {getFileIcon(file.mimeType)}
                       </div>
                       <div className="min-w-0">
-                        <div className="truncate font-bold text-foreground text-sm max-w-xs sm:max-w-md">
+                        <div className="truncate font-bold text-foreground text-xs sm:text-sm max-w-[140px] sm:max-w-xs md:max-w-md">
                           {file.originalName}
                         </div>
                         {file.project && (
@@ -236,21 +249,21 @@ export function FilesClient({ initialFiles }: FilesClientProps) {
                       </div>
                     </td>
 
-                    <td className="px-6 py-4 text-xs font-semibold text-muted-foreground">
+                    <td className="hidden sm:table-cell px-3 sm:px-6 py-3 text-xs font-semibold text-muted-foreground">
                       <Badge variant="outline" className="text-[10px] uppercase font-bold px-2 py-0.5 border-border/60">
                         {file.mimeType.split("/")[1] || "file"}
                       </Badge>
                     </td>
 
-                    <td className="px-6 py-4 text-xs font-medium text-muted-foreground">
+                    <td className="px-3 sm:px-6 py-3 text-xs font-medium text-muted-foreground whitespace-nowrap">
                       {formatBytes(file.sizeBytes)}
                     </td>
 
-                    <td className="px-6 py-4 text-xs font-medium text-muted-foreground">
+                    <td className="hidden md:table-cell px-3 sm:px-6 py-3 text-xs font-medium text-muted-foreground whitespace-nowrap">
                       {formatDate(file.createdAt)}
                     </td>
 
-                    <td className="px-6 py-4 text-right">
+                    <td className="px-3 sm:px-6 py-3 text-right">
                       <div className="flex items-center justify-end gap-1.5">
                         {/* Direct Download */}
                         <a

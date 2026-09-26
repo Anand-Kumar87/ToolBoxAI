@@ -37,6 +37,7 @@ import {
   changePasswordAction,
   deleteAccountAction,
 } from "@/actions/profile";
+import { optimizeImageForUpload } from "@/lib/image-optimizer-client";
 import { cn } from "@/lib/utils";
 
 const AVATAR_PRESETS = [
@@ -130,15 +131,20 @@ export function ProfileForm({ initialData }: ProfileFormProps) {
       return;
     }
 
-    if (file.size > 5 * 1024 * 1024) {
-      toast.error("Image file must be under 5MB.");
-      return;
-    }
-
     setUploadingAvatar(true);
+    const toastId = toast.loading("Processing avatar...");
     try {
+      let fileToUpload = file;
+      if (file.size > 1024 * 1024) {
+        try {
+          fileToUpload = await optimizeImageForUpload(file, 800, 0.88);
+        } catch {
+          fileToUpload = file;
+        }
+      }
+
       const formData = new FormData();
-      formData.append("avatar", file);
+      formData.append("avatar", fileToUpload);
 
       const res = await uploadAvatarAction(formData);
       if (res.success) {
@@ -148,14 +154,15 @@ export function ProfileForm({ initialData }: ProfileFormProps) {
             await updateSession({ image: res.avatarUrl });
           }
         }
-        toast.success(res.message);
+        toast.success(res.message, { id: toastId });
         setAvatarModalOpen(false);
         router.refresh();
       } else {
-        toast.error(res.error || "Failed to upload avatar");
+        toast.error(res.error || "Failed to upload avatar", { id: toastId });
       }
-    } catch {
-      toast.error("An error occurred while uploading your avatar.");
+    } catch (err: any) {
+      console.error("[handleCustomAvatarUpload]", err);
+      toast.error(err?.message || "An error occurred while uploading your avatar.", { id: toastId });
     } finally {
       setUploadingAvatar(false);
     }
