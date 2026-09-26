@@ -209,9 +209,14 @@ export function VideoToolClient({ tool }: VideoToolClientProps) {
       setProgressPercent(45);
       setGenerationStage("Rendering 10s cinematic motion physics & audio...");
 
-      // Step 3: Off-screen high-res canvas synthesis
-      const width = aiAspectRatio === "9:16" ? 720 : aiAspectRatio === "1:1" ? 720 : 1280;
-      const height = aiAspectRatio === "9:16" ? 1280 : aiAspectRatio === "1:1" ? 720 : 720;
+      // Step 3: Off-screen canvas synthesis (optimized for mobile device CPUs)
+      const isMobile = typeof window !== "undefined" && window.innerWidth < 768;
+      const width = isMobile
+        ? (aiAspectRatio === "9:16" ? 480 : aiAspectRatio === "1:1" ? 480 : 854)
+        : (aiAspectRatio === "9:16" ? 720 : aiAspectRatio === "1:1" ? 720 : 1280);
+      const height = isMobile
+        ? (aiAspectRatio === "9:16" ? 854 : aiAspectRatio === "1:1" ? 480 : 480)
+        : (aiAspectRatio === "9:16" ? 1280 : aiAspectRatio === "1:1" ? 720 : 720);
 
       const canvas = document.createElement("canvas");
       canvas.width = width;
@@ -220,7 +225,7 @@ export function VideoToolClient({ tool }: VideoToolClientProps) {
       if (!ctx) throw new Error("Canvas context not available");
 
       // MediaRecorder stream
-      const stream = canvas.captureStream(30);
+      const stream = canvas.captureStream(isMobile ? 24 : 30);
 
       // Synthesize ambient cinematic soundtrack
       try {
@@ -252,13 +257,30 @@ export function VideoToolClient({ tool }: VideoToolClientProps) {
         console.warn("Audio synthesis bypassed:", audioErr);
       }
 
-      const mimeType = MediaRecorder.isTypeSupported("video/webm;codecs=vp9")
-        ? "video/webm;codecs=vp9"
-        : MediaRecorder.isTypeSupported("video/webm")
-        ? "video/webm"
-        : "video/mp4";
+      let chosenMime = "video/webm";
+      let recorderOptions: MediaRecorderOptions = {};
 
-      const recorder = new MediaRecorder(stream, { mimeType });
+      if (typeof MediaRecorder !== "undefined") {
+        if (MediaRecorder.isTypeSupported("video/webm;codecs=vp9")) {
+          chosenMime = "video/webm;codecs=vp9";
+          recorderOptions = { mimeType: chosenMime };
+        } else if (MediaRecorder.isTypeSupported("video/webm")) {
+          chosenMime = "video/webm";
+          recorderOptions = { mimeType: chosenMime };
+        } else if (MediaRecorder.isTypeSupported("video/mp4")) {
+          chosenMime = "video/mp4";
+          recorderOptions = { mimeType: chosenMime };
+        }
+      }
+
+      let recorder: MediaRecorder;
+      try {
+        recorder = new MediaRecorder(stream, recorderOptions);
+      } catch {
+        // Fallback for Safari/iOS
+        recorder = new MediaRecorder(stream);
+      }
+
       const chunks: Blob[] = [];
       recorder.ondataavailable = (e) => {
         if (e.data.size > 0) chunks.push(e.data);
@@ -266,7 +288,7 @@ export function VideoToolClient({ tool }: VideoToolClientProps) {
 
       const recordPromise = new Promise<string>((resolve) => {
         recorder.onstop = () => {
-          const blob = new Blob(chunks, { type: mimeType });
+          const blob = new Blob(chunks, { type: recorder.mimeType || chosenMime });
           const url = URL.createObjectURL(blob);
           resolve(url);
         };

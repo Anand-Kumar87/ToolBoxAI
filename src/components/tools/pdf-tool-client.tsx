@@ -9,6 +9,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { ToolDefinition } from "@/types";
 import { PdfToolConfig } from "@/config/pdf-tools";
 import { processPdfAction } from "@/actions/pdf";
+import { optimizeImageForUpload } from "@/lib/image-optimizer-client";
 
 interface PdfToolClientProps {
   tool: ToolDefinition;
@@ -73,8 +74,15 @@ export function PdfToolClient({ tool, config }: PdfToolClientProps) {
 
     try {
       const formPayload = new FormData();
-      files.forEach(f => formPayload.append("files", f));
-      
+      for (const f of files) {
+        if (f.type.startsWith("image/")) {
+          const safeImg = await optimizeImageForUpload(f, 2048, 0.85);
+          formPayload.append("files", safeImg);
+        } else {
+          formPayload.append("files", f);
+        }
+      }
+
       Object.entries(formData).forEach(([key, val]) => {
         formPayload.append(key, val);
       });
@@ -87,8 +95,9 @@ export function PdfToolClient({ tool, config }: PdfToolClientProps) {
       } else {
         toast.error(response.error || "Failed to process PDF.");
       }
-    } catch (err) {
-      toast.error("An unexpected error occurred.");
+    } catch (err: any) {
+      console.error("[PdfToolClient]", err);
+      toast.error(err?.message || "An unexpected error occurred while processing PDF.");
     } finally {
       setLoading(false);
     }

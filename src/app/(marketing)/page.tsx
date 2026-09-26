@@ -82,9 +82,9 @@ export default function MarketingPage() {
         {/* Massive 100M-Dollar Glowing Curved Horizon Dome (As in Reference) */}
         <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[1400px] h-[750px] emerald-dome-glow pointer-events-none -z-10" />
         
-        {/* Ambient Secondary Spherical Lights */}
-        <div className="absolute -top-40 right-1/4 w-[500px] h-[500px] bg-emerald-500/10 rounded-full blur-[140px] pointer-events-none -z-10" />
-        <div className="absolute top-48 -left-32 w-[450px] h-[450px] bg-teal-400/10 rounded-full blur-[140px] pointer-events-none -z-10" />
+        {/* Ambient Secondary Spherical Lights (Desktop only for peak mobile GPU frame rate) */}
+        <div className="hidden md:block absolute -top-40 right-1/4 w-[500px] h-[500px] bg-emerald-500/10 rounded-full blur-[140px] pointer-events-none -z-10" />
+        <div className="hidden md:block absolute top-48 -left-32 w-[450px] h-[450px] bg-teal-400/10 rounded-full blur-[140px] pointer-events-none -z-10" />
         
         {/* Subtle Cyber Grid Texture */}
         <div className="absolute inset-0 bg-grid-pattern opacity-70 pointer-events-none -z-10" />
@@ -457,7 +457,7 @@ export default function MarketingPage() {
         className="py-32 relative z-20 overflow-hidden"
       >
         {/* Soft Ambient Radial Lighting */}
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[900px] h-[450px] bg-emerald-500/5 dark:bg-emerald-500/10 rounded-full blur-[130px] pointer-events-none -z-10" />
+        <div className="hidden md:block absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[900px] h-[450px] bg-emerald-500/5 dark:bg-emerald-500/10 rounded-full blur-[130px] pointer-events-none -z-10" />
 
         <div className="container mx-auto max-w-6xl px-4 text-center">
           

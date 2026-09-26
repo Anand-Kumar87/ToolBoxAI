@@ -131,15 +131,8 @@ export async function checkUserAccessAndLimits(
 
   // If user has an active 7-day trial
   if (isTrialActive) {
-    // Trial users have PRO tier privileges during trial period
-    if (tool.planRequired === "PREMIUM") {
-      return {
-        allowed: false,
-        reason: "This tool requires a Premium plan. Upgrade to unlock full studio access.",
-        plan: "TRIAL",
-        trialDaysRemaining: daysRemaining,
-      };
-    }
+    // Trial users have full VIP access across all tools during their 7-day trial period
+
 
     // Trial usage cap (e.g. 50 AI requests during trial)
     if (tool.category === "AI") {

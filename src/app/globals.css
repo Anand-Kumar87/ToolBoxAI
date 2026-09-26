@@ -82,6 +82,10 @@
   * {
     @apply border-border;
   }
+  html, body {
+    touch-action: manipulation;
+    -webkit-tap-highlight-color: transparent;
+  }
   body {
     @apply bg-background text-foreground antialiased selection:bg-primary/30 selection:text-primary font-sans;
     font-feature-settings: "cv02", "cv03", "cv04", "cv11";
@@ -90,6 +94,13 @@
   h1, h2, h3, h4, h5, h6 {
     font-family: var(--font-heading), var(--font-sans), system-ui, sans-serif;
     letter-spacing: -0.035em;
+  }
+
+  @media (max-width: 768px) {
+    .glass-panel, .glass-card {
+      backdrop-filter: blur(10px) !important;
+      -webkit-backdrop-filter: blur(10px) !important;
+    }
   }
 }
 

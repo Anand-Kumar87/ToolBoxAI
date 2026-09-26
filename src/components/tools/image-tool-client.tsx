@@ -27,6 +27,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { ToolDefinition } from "@/types";
 import { ImageToolConfig } from "@/config/image-tools";
 import { processImageAction } from "@/actions/image";
+import { optimizeImageForUpload } from "@/lib/image-optimizer-client";
 
 interface ImageToolClientProps {
   tool: ToolDefinition;
@@ -92,15 +93,26 @@ export function ImageToolClient({ tool, config }: ImageToolClientProps) {
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
-  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const selected = e.target.files?.[0];
     if (selected) {
       if (!selected.type.startsWith("image/")) {
         toast.error("Please upload a valid image file.");
         return;
       }
-      setFile(selected);
-      const url = URL.createObjectURL(selected);
+
+      // Auto-optimize camera photos on mobile to prevent memory lag
+      let processedFile = selected;
+      if (selected.size > 2.5 * 1024 * 1024) {
+        try {
+          processedFile = await optimizeImageForUpload(selected, 2048, 0.9);
+        } catch {
+          processedFile = selected;
+        }
+      }
+
+      setFile(processedFile);
+      const url = URL.createObjectURL(processedFile);
       setImageSrc(url);
       setOriginalSrc(url);
       setResultBase64(null);
@@ -122,16 +134,30 @@ export function ImageToolClient({ tool, config }: ImageToolClientProps) {
       const overlayCanvas = overlayCanvasRef.current;
       if (!mainCanvas || !overlayCanvas) return;
 
-      mainCanvas.width = img.naturalWidth;
-      mainCanvas.height = img.naturalHeight;
-      overlayCanvas.width = img.naturalWidth;
-      overlayCanvas.height = img.naturalHeight;
+      // Restrict working canvas max dimension to 1920 to prevent 400MB RAM crash on mobile browsers
+      const MAX_CANVAS = 1920;
+      let w = img.naturalWidth || 800;
+      let h = img.naturalHeight || 600;
+      if (w > MAX_CANVAS || h > MAX_CANVAS) {
+        if (w > h) {
+          h = Math.round((h * MAX_CANVAS) / w);
+          w = MAX_CANVAS;
+        } else {
+          w = Math.round((w * MAX_CANVAS) / h);
+          h = MAX_CANVAS;
+        }
+      }
+
+      mainCanvas.width = w;
+      mainCanvas.height = h;
+      overlayCanvas.width = w;
+      overlayCanvas.height = h;
 
       const ctx = mainCanvas.getContext("2d");
       if (ctx) {
-        ctx.clearRect(0, 0, mainCanvas.width, mainCanvas.height);
-        ctx.drawImage(img, 0, 0);
-        setResultBase64(mainCanvas.toDataURL());
+        ctx.clearRect(0, 0, w, h);
+        ctx.drawImage(img, 0, 0, w, h);
+        setResultBase64(mainCanvas.toDataURL("image/jpeg", 0.92));
       }
 
       const oCtx = overlayCanvas.getContext("2d");
@@ -485,8 +511,11 @@ export function ImageToolClient({ tool, config }: ImageToolClientProps) {
     setResultBase64(null);
 
     try {
+      // Ensure file payload is under Vercel's 4.5MB limit
+      const safeFile = await optimizeImageForUpload(file, 2048, 0.88);
+
       const formPayload = new FormData();
-      formPayload.append("file", file);
+      formPayload.append("file", safeFile);
 
       Object.entries(formData).forEach(([key, val]) => {
         formPayload.append(key, val);
@@ -499,8 +528,9 @@ export function ImageToolClient({ tool, config }: ImageToolClientProps) {
       } else {
         toast.error(response.error || "Failed to process image.");
       }
-    } catch {
-      toast.error("An unexpected error occurred.");
+    } catch (err: any) {
+      console.error("[ImageToolClient]", err);
+      toast.error(err?.message || "An unexpected error occurred while processing image.");
     } finally {
       setLoading(false);
     }

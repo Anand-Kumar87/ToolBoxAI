@@ -137,9 +137,9 @@ export function Navbar() {
             <Button
               variant="ghost"
               size="icon"
-              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+              onClick={() => setMobileMenuOpen((prev) => !prev)}
               aria-label="Toggle navigation menu"
-              className="h-9 w-9 rounded-full text-foreground hover:bg-muted/50"
+              className="h-9 w-9 rounded-full text-foreground hover:bg-muted/50 touch-manipulation cursor-pointer select-none active:scale-90"
             >
               {mobileMenuOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
             </Button>
@@ -147,9 +147,14 @@ export function Navbar() {
         </div>
       </header>
 
-      {/* Mobile Menu Dropdown */}
+      {/* Mobile Menu Dropdown & Backdrop */}
       {mobileMenuOpen && (
-        <div className="absolute top-20 left-4 right-4 lg:hidden pointer-events-auto glass-panel rounded-3xl p-5 shadow-2xl animate-in fade-in slide-in-from-top-4 border-white/15">
+        <>
+          <div
+            className="fixed inset-0 bg-black/60 backdrop-blur-xs pointer-events-auto z-40 lg:hidden animate-in fade-in duration-200"
+            onClick={() => setMobileMenuOpen(false)}
+          />
+          <div className="absolute top-20 left-4 right-4 z-50 lg:hidden pointer-events-auto glass-panel rounded-3xl p-5 shadow-2xl animate-in fade-in slide-in-from-top-4 border-white/15">
           <div className="flex flex-col space-y-1">
             {NAV_ITEMS.map((item) => (
               <Link
@@ -202,7 +207,8 @@ export function Navbar() {
             )}
           </div>
         </div>
-      )}
-    </div>
+      </>
+    )}
+  </div>
   );
 }
