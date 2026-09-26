@@ -5,6 +5,7 @@ import path from "path";
 import { prisma } from "@/lib/prisma";
 import { getServerAuthSession } from "@/lib/auth";
 import { revalidatePath } from "next/cache";
+import sharp from "sharp";
 
 export type FileActionResult = 
   | { success: true; message: string; data?: any }
@@ -64,8 +65,21 @@ export async function uploadFileAction(formData: FormData): Promise<FileActionRe
       publicUrl = `/uploads/${userId}/${uniqueKey}`;
     } catch {
       // Running on read-only serverless environment (e.g. Vercel Lambda)
-      // Store as standard base64 data URL so file is accessible anywhere
-      publicUrl = `data:${file.type || "application/octet-stream"};base64,${buffer.toString("base64")}`;
+      // If image, downsample to max 1600px JPEG to ensure compact storage (< 300KB)
+      let storageBuffer = buffer;
+      let storageMime = file.type || "application/octet-stream";
+      if (file.type.startsWith("image/")) {
+        try {
+          storageBuffer = await sharp(buffer)
+            .resize(1600, 1600, { fit: "inside", withoutEnlargement: true })
+            .jpeg({ quality: 80 })
+            .toBuffer();
+          storageMime = "image/jpeg";
+        } catch {
+          storageBuffer = buffer;
+        }
+      }
+      publicUrl = `data:${storageMime};base64,${storageBuffer.toString("base64")}`;
     }
 
     // Create database entry
@@ -93,7 +107,20 @@ export async function uploadFileAction(formData: FormData): Promise<FileActionRe
 
     revalidatePath("/dashboard/files");
     revalidatePath("/dashboard/projects");
-    return { success: true, message: `Uploaded ${file.name} successfully!`, data: fileRecord };
+
+    // Return lightweight metadata only so Server Action response avoids RSC flight payload limit
+    return {
+      success: true,
+      message: `Uploaded ${file.name} successfully!`,
+      data: {
+        id: fileRecord.id,
+        fileName: fileRecord.fileName,
+        originalName: fileRecord.originalName,
+        mimeType: fileRecord.mimeType,
+        sizeBytes: fileRecord.sizeBytes,
+        createdAt: fileRecord.createdAt,
+      },
+    };
   } catch (error: any) {
     console.error("[uploadFileAction] Error:", error);
     return { success: false, error: "Failed to upload file. Please try again." };

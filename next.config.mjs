@@ -4,6 +4,11 @@ const nextConfig = {
   devIndicators: {
     position: "bottom-right",
   },
+  experimental: {
+    serverActions: {
+      bodySizeLimit: "25mb",
+    },
+  },
   images: {
     remotePatterns: [
       { protocol: "https", hostname: "api.dicebear.com" },

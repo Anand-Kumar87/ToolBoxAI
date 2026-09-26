@@ -8,6 +8,7 @@ import { z } from "zod";
 import { revalidatePath } from "next/cache";
 import path from "path";
 import fs from "fs/promises";
+import sharp from "sharp";
 
 type ActionResult = { success: true; message: string; avatarUrl?: string } | { success: false; error: string };
 
@@ -131,19 +132,32 @@ export async function uploadAvatarAction(formData: FormData): Promise<ActionResu
     const safeExt = EXT_MAP[rawExt] || (file.type === "image/png" ? ".png" : file.type === "image/webp" ? ".webp" : ".jpg");
 
     const bytes = await file.arrayBuffer();
-    const buffer = Buffer.from(bytes);
+    const rawBuffer = Buffer.from(bytes);
+
+    // Optimize and crop avatar to compact 256x256 square (< 30KB)
+    let buffer: Buffer = rawBuffer;
+    let outMime = "image/jpeg";
+    try {
+      buffer = await sharp(rawBuffer)
+        .resize(256, 256, { fit: "cover", position: "center" })
+        .jpeg({ quality: 85 })
+        .toBuffer();
+    } catch {
+      buffer = rawBuffer;
+      outMime = file.type || "image/jpeg";
+    }
 
     let publicUrl = "";
     try {
       const uploadsDir = path.join(process.cwd(), "public", "uploads", "avatars");
       await fs.mkdir(uploadsDir, { recursive: true });
-      const filename = `${userId}-${Date.now()}${safeExt}`;
+      const filename = `${userId}-${Date.now()}.jpg`;
       const filePath = path.join(uploadsDir, filename);
       await fs.writeFile(filePath, buffer);
       publicUrl = `/uploads/avatars/${filename}`;
     } catch {
-      // Serverless fallback for Vercel/AWS Lambda
-      publicUrl = `data:${file.type};base64,${buffer.toString("base64")}`;
+      // Serverless fallback for Vercel/AWS Lambda: ultra-compact base64 avatar (~20KB)
+      publicUrl = `data:${outMime};base64,${buffer.toString("base64")}`;
     }
 
     await prisma.$transaction([

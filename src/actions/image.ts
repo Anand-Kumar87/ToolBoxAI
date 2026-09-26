@@ -37,8 +37,7 @@ export async function processImageAction(toolSlug: string, formData: FormData) {
     let processedBuffer: Buffer = buffer;
     let mimeType = file.type || "image/png";
 
-    const instance = sharp(buffer);
-    const metadata = await instance.metadata();
+    const metadata = await sharp(buffer).metadata();
     const width = metadata.width || 800;
     const height = metadata.height || 600;
 
@@ -51,24 +50,24 @@ export async function processImageAction(toolSlug: string, formData: FormData) {
       case "image-resizer": {
         const w = parseInt(formData.get("width") as string);
         const h = parseInt(formData.get("height") as string);
-        if (w && h) processedBuffer = await instance.resize(w, h, { fit: "fill" }).toBuffer();
-        else if (w) processedBuffer = await instance.resize({ width: w }).toBuffer();
-        else if (h) processedBuffer = await instance.resize({ height: h }).toBuffer();
+        if (w && h) processedBuffer = await sharp(buffer).resize(w, h, { fit: "fill" }).toBuffer();
+        else if (w) processedBuffer = await sharp(buffer).resize({ width: w }).toBuffer();
+        else if (h) processedBuffer = await sharp(buffer).resize({ height: h }).toBuffer();
         break;
       }
 
       case "image-compressor": {
         const quality = parseInt(formData.get("quality") as string) || 60;
-        processedBuffer = await instance.jpeg({ quality, mozjpeg: true }).toBuffer();
+        processedBuffer = await sharp(buffer).jpeg({ quality, mozjpeg: true }).toBuffer();
         mimeType = "image/jpeg";
         break;
       }
 
       case "image-converter": {
         const format = formData.get("format") as string; // 'jpeg', 'png', 'webp'
-        if (format === "jpeg") processedBuffer = await instance.jpeg().toBuffer();
-        else if (format === "png") processedBuffer = await instance.png().toBuffer();
-        else if (format === "webp") processedBuffer = await instance.webp().toBuffer();
+        if (format === "jpeg") processedBuffer = await sharp(buffer).jpeg().toBuffer();
+        else if (format === "png") processedBuffer = await sharp(buffer).png().toBuffer();
+        else if (format === "webp") processedBuffer = await sharp(buffer).webp().toBuffer();
         mimeType = `image/${format}`;
         break;
       }
@@ -83,46 +82,46 @@ export async function processImageAction(toolSlug: string, formData: FormData) {
         else if (ratio === "9:16") { targetH = height; targetW = Math.round(height * 9 / 16); }
         else if (ratio === "4:3") { targetW = width; targetH = Math.round(width * 3 / 4); }
 
-        processedBuffer = await instance.resize(targetW, targetH, { fit: "cover", position: "center" }).toBuffer();
+        processedBuffer = await sharp(buffer).resize(targetW, targetH, { fit: "cover", position: "center" }).toBuffer();
         break;
       }
 
       case "image-enhancer": {
         const brightness = parseFloat(formData.get("brightness") as string) || 1.2;
         const saturation = parseFloat(formData.get("saturation") as string) || 1.5;
-        processedBuffer = await instance.modulate({ brightness, saturation }).toBuffer();
+        processedBuffer = await sharp(buffer).modulate({ brightness, saturation }).toBuffer();
         break;
       }
 
       case "image-blur-tool": {
         const sigma = parseFloat(formData.get("intensity") as string) || 5;
-        processedBuffer = await instance.blur(sigma).toBuffer();
+        processedBuffer = await sharp(buffer).blur(sigma).toBuffer();
         break;
       }
 
       case "image-sharpener": {
-        processedBuffer = await instance.sharpen().toBuffer();
+        processedBuffer = await sharp(buffer).sharpen().toBuffer();
         break;
       }
 
       case "image-filters": {
         const filter = formData.get("filter") as string;
         if (filter === "Grayscale") {
-          processedBuffer = await instance.grayscale().toBuffer();
+          processedBuffer = await sharp(buffer).grayscale().toBuffer();
         } else if (filter === "Sepia") {
-          processedBuffer = await instance.recomb([
+          processedBuffer = await sharp(buffer).recomb([
             [0.393, 0.769, 0.189],
             [0.349, 0.686, 0.168],
             [0.272, 0.534, 0.131],
           ]).toBuffer();
         } else if (filter === "High Contrast") {
-          processedBuffer = await instance.linear(1.5, -0.2).toBuffer();
+          processedBuffer = await sharp(buffer).linear(1.5, -0.2).toBuffer();
         } else if (filter === "Vintage Cool") {
-          processedBuffer = await instance.modulate({ saturation: 0.8 }).tint({ r: 200, g: 230, b: 255 }).toBuffer();
+          processedBuffer = await sharp(buffer).modulate({ saturation: 0.8 }).tint({ r: 200, g: 230, b: 255 }).toBuffer();
         } else if (filter === "Warm Sunset") {
-          processedBuffer = await instance.modulate({ brightness: 1.1, saturation: 1.3 }).tint({ r: 255, g: 220, b: 180 }).toBuffer();
+          processedBuffer = await sharp(buffer).modulate({ brightness: 1.1, saturation: 1.3 }).tint({ r: 255, g: 220, b: 180 }).toBuffer();
         } else {
-          processedBuffer = await instance.toBuffer();
+          processedBuffer = await sharp(buffer).toBuffer();
         }
         break;
       }
@@ -133,7 +132,7 @@ export async function processImageAction(toolSlug: string, formData: FormData) {
         const targetW = Math.min(4000, width * factor);
         const targetH = Math.min(4000, height * factor);
 
-        processedBuffer = await instance
+        processedBuffer = await sharp(buffer)
           .resize(targetW, targetH, { kernel: "lanczos3" })
           .sharpen({ sigma: 1.2, m1: 1.5, m2: 0.5 })
           .png({ quality: 100 })
@@ -276,23 +275,15 @@ export async function processImageAction(toolSlug: string, formData: FormData) {
           .replace(/>/g, "&gt;")
           .replace(/"/g, "&quot;")
           .replace(/'/g, "&#39;");
-        const svg = `
-          <svg width="${width}" height="${height}">
-            <style>
-              .overlay-text {
-                fill: ${hexColor};
-                font-size: ${fontSize}px;
-                font-family: Arial, Helvetica, sans-serif;
-                font-weight: bold;
-                text-anchor: middle;
-                filter: drop-shadow(2px 3px 4px rgba(0, 0, 0, 0.8));
-              }
-            </style>
-            <text x="${Math.round(width / 2)}" y="${yPos}" class="overlay-text">${safeText}</text>
-          </svg>
-        `;
 
-        processedBuffer = await instance
+        // Clean, valid SVG with XML namespace and outline for contrast - 100% compatible with librsvg on Linux
+        const strokeWidth = Math.max(1, Math.round(fontSize / 24));
+        const strokeColor = hexColor === "#000000" ? "#FFFFFF" : "#000000";
+        const svg = `<svg width="${width}" height="${height}" viewBox="0 0 ${width} ${height}" xmlns="http://www.w3.org/2000/svg">
+          <text x="${Math.round(width / 2)}" y="${yPos}" fill="${hexColor}" stroke="${strokeColor}" stroke-width="${strokeWidth}" stroke-linejoin="round" font-size="${fontSize}" font-family="DejaVu Sans, Arial, Helvetica, sans-serif" font-weight="bold" text-anchor="middle">${safeText}</text>
+        </svg>`;
+
+        processedBuffer = await sharp(buffer)
           .composite([{ input: Buffer.from(svg) }])
           .toBuffer();
         break;
@@ -301,7 +292,7 @@ export async function processImageAction(toolSlug: string, formData: FormData) {
       case "passport-photo-maker": {
         // Standard passport: 2x2 inch at 300dpi = 600x600 px
         const cropSize = Math.min(width, height);
-        const squareCropped = await instance
+        const squareCropped = await sharp(buffer)
           .resize(cropSize, cropSize, { fit: "cover", position: "center" })
           .resize(600, 600)
           .toBuffer();
@@ -325,7 +316,7 @@ export async function processImageAction(toolSlug: string, formData: FormData) {
       case "collage-maker": {
         // Create side-by-side or stacked grid layout
         const layout = (formData.get("layout") as string) || "Side-by-Side";
-        const thumb = await instance.resize(400, 400, { fit: "cover" }).toBuffer();
+        const thumb = await sharp(buffer).resize(400, 400, { fit: "cover" }).toBuffer();
 
         if (layout.includes("Stacked")) {
           processedBuffer = await sharp({
@@ -388,11 +379,13 @@ export async function processImageAction(toolSlug: string, formData: FormData) {
 
         let svg = "";
         if (style.includes("Diagonal Tiled")) {
+          const tileW = Math.max(200, Math.round(width / 3));
+          const tileH = Math.max(140, Math.round(height / 4));
           svg = `
-            <svg width="${width}" height="${height}">
+            <svg width="${width}" height="${height}" viewBox="0 0 ${width} ${height}" xmlns="http://www.w3.org/2000/svg">
               <defs>
-                <pattern id="wmPattern" width="${Math.max(200, Math.round(width / 3))}" height="${Math.max(140, Math.round(height / 4))}" patternTransform="rotate(-30)" patternUnits="userSpaceOnUse">
-                  <text x="20" y="40" fill="rgba(${rgbColor}, ${alpha})" font-size="28" font-family="Arial, sans-serif" font-weight="bold">${safeText}</text>
+                <pattern id="wmPattern" width="${tileW}" height="${tileH}" patternTransform="rotate(-30)" patternUnits="userSpaceOnUse">
+                  <text x="20" y="40" fill="rgba(${rgbColor}, ${alpha})" font-size="28" font-family="DejaVu Sans, Arial, sans-serif" font-weight="bold">${safeText}</text>
                 </pattern>
               </defs>
               <rect width="100%" height="100%" fill="url(#wmPattern)" />
@@ -400,19 +393,21 @@ export async function processImageAction(toolSlug: string, formData: FormData) {
           `;
         } else if (style.includes("Bottom Right")) {
           svg = `
-            <svg width="${width}" height="${height}">
-              <text x="${width - 30}" y="${height - 30}" text-anchor="end" fill="rgba(${rgbColor}, ${alpha * 1.5})" font-size="32" font-family="Arial, sans-serif" font-weight="bold" filter="drop-shadow(2px 2px 3px rgba(0,0,0,0.5))">${safeText}</text>
+            <svg width="${width}" height="${height}" viewBox="0 0 ${width} ${height}" xmlns="http://www.w3.org/2000/svg">
+              <text x="${width - 30}" y="${height - 30}" text-anchor="end" fill="rgba(${rgbColor}, ${alpha * 1.5})" font-size="32" font-family="DejaVu Sans, Arial, sans-serif" font-weight="bold">${safeText}</text>
             </svg>
           `;
         } else {
           svg = `
-            <svg width="${width}" height="${height}">
-              <text x="${Math.round(width / 2)}" y="${Math.round(height / 2)}" text-anchor="middle" transform="rotate(-30 ${Math.round(width / 2)} ${Math.round(height / 2)})" fill="rgba(${rgbColor}, ${alpha})" font-size="${Math.round(width / 12)}" font-family="Arial, sans-serif" font-weight="bold">${safeText}</text>
+            <svg width="${width}" height="${height}" viewBox="0 0 ${width} ${height}" xmlns="http://www.w3.org/2000/svg">
+              <text x="${Math.round(width / 2)}" y="${Math.round(height / 2)}" text-anchor="middle" transform="rotate(-30 ${Math.round(width / 2)} ${Math.round(height / 2)})" fill="rgba(${rgbColor}, ${alpha})" font-size="${Math.round(width / 12)}" font-family="DejaVu Sans, Arial, sans-serif" font-weight="bold">${safeText}</text>
             </svg>
           `;
         }
 
-        processedBuffer = await instance.composite([{ input: Buffer.from(svg) }]).toBuffer();
+        processedBuffer = await sharp(buffer)
+          .composite([{ input: Buffer.from(svg) }])
+          .toBuffer();
         break;
       }
 
@@ -514,7 +509,7 @@ export async function processImageAction(toolSlug: string, formData: FormData) {
         }
 
         // Composite the reconstructed clean patch seamlessly over the watermark
-        processedBuffer = await instance
+        processedBuffer = await sharp(buffer)
           .composite([
             {
               input: inpaintedPatch,
@@ -528,7 +523,16 @@ export async function processImageAction(toolSlug: string, formData: FormData) {
       }
 
       default:
-        processedBuffer = await instance.toBuffer();
+        processedBuffer = await sharp(buffer).toBuffer();
+    }
+
+    // CRITICAL: Ensure base64 payload is bounded (< 2MB) to prevent Vercel 4.5MB Serverless response limit crash
+    if (processedBuffer.length > 2 * 1024 * 1024) {
+      processedBuffer = await sharp(processedBuffer)
+        .resize(1920, 1920, { fit: "inside", withoutEnlargement: true })
+        .jpeg({ quality: 85 })
+        .toBuffer();
+      mimeType = "image/jpeg";
     }
 
     const executionTimeMs = Date.now() - startTime;

@@ -27,6 +27,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { ToolDefinition } from "@/types";
 import { ImageToolConfig } from "@/config/image-tools";
 import { processImageAction } from "@/actions/image";
+import { recordClientToolUsageAction } from "@/actions/usage";
 import { optimizeImageForUpload } from "@/lib/image-optimizer-client";
 
 interface ImageToolClientProps {
@@ -499,6 +500,285 @@ export function ImageToolClient({ tool, config }: ImageToolClientProps) {
     };
   };
 
+  // Client-Side Canvas Engine for instant, lag-free processing on mobile and desktop
+  const processImageOnCanvas = async (
+    sourceFile: File,
+    toolSlug: string,
+    params: Record<string, string>
+  ): Promise<string | null> => {
+    return new Promise((resolve) => {
+      const img = new Image();
+      const objectUrl = URL.createObjectURL(sourceFile);
+      img.crossOrigin = "anonymous";
+
+      img.onload = () => {
+        URL.revokeObjectURL(objectUrl);
+        const width = img.naturalWidth || 800;
+        const height = img.naturalHeight || 600;
+
+        const canvas = document.createElement("canvas");
+        const ctx = canvas.getContext("2d");
+        if (!ctx) return resolve(null);
+
+        try {
+          switch (toolSlug) {
+            case "add-text-to-image": {
+              canvas.width = width;
+              canvas.height = height;
+              ctx.drawImage(img, 0, 0);
+
+              const text = params.text || "Korevante Studio";
+              const position = params.position || "Bottom";
+              const colorName = params.color || "White";
+              const userFontSize = parseInt(params.fontSize) || 48;
+
+              const colorMap: Record<string, string> = {
+                White: "#FFFFFF",
+                Yellow: "#FBBF24",
+                Cyan: "#06B6D4",
+                Black: "#000000",
+              };
+              const hexColor = colorMap[colorName] || "#FFFFFF";
+
+              // Responsive font scaling for crisp high-resolution display
+              const scale = width / 1200;
+              const responsiveFontSize = Math.max(16, Math.round(userFontSize * Math.max(0.6, scale)));
+
+              let yPos = Math.round(height * 0.9);
+              if (position === "Center") yPos = Math.round(height * 0.5);
+              if (position === "Top") yPos = Math.round(height * 0.15);
+
+              ctx.font = `bold ${responsiveFontSize}px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif`;
+              ctx.textAlign = "center";
+              ctx.textBaseline = "middle";
+
+              // High-contrast outline so text is always 100% visible on any background
+              ctx.strokeStyle = hexColor === "#000000" ? "rgba(255, 255, 255, 0.9)" : "rgba(0, 0, 0, 0.9)";
+              ctx.lineWidth = Math.max(2, Math.round(responsiveFontSize / 12));
+              ctx.strokeText(text, Math.round(width / 2), yPos);
+
+              ctx.fillStyle = hexColor;
+              ctx.fillText(text, Math.round(width / 2), yPos);
+
+              resolve(canvas.toDataURL(sourceFile.type === "image/png" ? "image/png" : "image/jpeg", 0.92));
+              break;
+            }
+
+            case "image-resizer": {
+              const w = parseInt(params.width);
+              const h = parseInt(params.height);
+              let targetW = width;
+              let targetH = height;
+
+              if (w && h) {
+                targetW = w;
+                targetH = h;
+              } else if (w) {
+                targetW = w;
+                targetH = Math.round((height * w) / width);
+              } else if (h) {
+                targetH = h;
+                targetW = Math.round((width * h) / height);
+              }
+
+              canvas.width = targetW;
+              canvas.height = targetH;
+              ctx.imageSmoothingEnabled = true;
+              ctx.imageSmoothingQuality = "high";
+              ctx.drawImage(img, 0, 0, targetW, targetH);
+              resolve(canvas.toDataURL(sourceFile.type === "image/png" ? "image/png" : "image/jpeg", 0.92));
+              break;
+            }
+
+            case "image-compressor": {
+              const quality = (parseInt(params.quality) || 60) / 100;
+              canvas.width = width;
+              canvas.height = height;
+              ctx.drawImage(img, 0, 0);
+              resolve(canvas.toDataURL("image/jpeg", Math.min(0.99, Math.max(0.1, quality))));
+              break;
+            }
+
+            case "image-converter": {
+              const format = params.format || "webp";
+              canvas.width = width;
+              canvas.height = height;
+              ctx.drawImage(img, 0, 0);
+              const mime = format === "png" ? "image/png" : format === "jpeg" ? "image/jpeg" : "image/webp";
+              resolve(canvas.toDataURL(mime, 0.92));
+              break;
+            }
+
+            case "image-cropper": {
+              const ratio = params.ratio || "1:1";
+              let cropW = width;
+              let cropH = height;
+
+              if (ratio === "1:1") {
+                cropW = Math.min(width, height);
+                cropH = cropW;
+              } else if (ratio === "16:9") {
+                cropW = width;
+                cropH = Math.round((width * 9) / 16);
+                if (cropH > height) {
+                  cropH = height;
+                  cropW = Math.round((height * 16) / 9);
+                }
+              } else if (ratio === "9:16") {
+                cropH = height;
+                cropW = Math.round((height * 9) / 16);
+                if (cropW > width) {
+                  cropW = width;
+                  cropH = Math.round((width * 16) / 9);
+                }
+              } else if (ratio === "4:3") {
+                cropW = width;
+                cropH = Math.round((width * 3) / 4);
+                if (cropH > height) {
+                  cropH = height;
+                  cropW = Math.round((height * 4) / 3);
+                }
+              }
+
+              const startX = Math.round((width - cropW) / 2);
+              const startY = Math.round((height - cropH) / 2);
+
+              canvas.width = cropW;
+              canvas.height = cropH;
+              ctx.drawImage(img, startX, startY, cropW, cropH, 0, 0, cropW, cropH);
+              resolve(canvas.toDataURL(sourceFile.type === "image/png" ? "image/png" : "image/jpeg", 0.92));
+              break;
+            }
+
+            case "image-enhancer": {
+              const brightness = parseFloat(params.brightness) || 1.2;
+              const saturation = parseFloat(params.saturation) || 1.5;
+              canvas.width = width;
+              canvas.height = height;
+              ctx.filter = `brightness(${brightness}) saturate(${saturation})`;
+              ctx.drawImage(img, 0, 0);
+              resolve(canvas.toDataURL(sourceFile.type === "image/png" ? "image/png" : "image/jpeg", 0.92));
+              break;
+            }
+
+            case "image-blur-tool": {
+              const intensity = parseFloat(params.intensity) || 5;
+              canvas.width = width;
+              canvas.height = height;
+              ctx.filter = `blur(${intensity}px)`;
+              ctx.drawImage(img, 0, 0);
+              resolve(canvas.toDataURL(sourceFile.type === "image/png" ? "image/png" : "image/jpeg", 0.92));
+              break;
+            }
+
+            case "image-filters": {
+              const filter = params.filter || "Grayscale";
+              canvas.width = width;
+              canvas.height = height;
+              if (filter === "Grayscale") ctx.filter = "grayscale(100%)";
+              else if (filter === "Sepia") ctx.filter = "sepia(100%)";
+              else if (filter === "High Contrast") ctx.filter = "contrast(160%)";
+              else if (filter === "Vintage Cool") ctx.filter = "sepia(40%) hue-rotate(180deg) saturate(110%)";
+              else if (filter === "Warm Sunset") ctx.filter = "sepia(40%) saturate(140%) brightness(105%)";
+              ctx.drawImage(img, 0, 0);
+              resolve(canvas.toDataURL(sourceFile.type === "image/png" ? "image/png" : "image/jpeg", 0.92));
+              break;
+            }
+
+            case "passport-photo-maker": {
+              canvas.width = 640;
+              canvas.height = 640;
+              ctx.fillStyle = "#FFFFFF";
+              ctx.fillRect(0, 0, 640, 640);
+
+              const squareSize = Math.min(width, height);
+              const startX = Math.round((width - squareSize) / 2);
+              const startY = Math.round((height - squareSize) / 2);
+
+              ctx.drawImage(img, startX, startY, squareSize, squareSize, 20, 20, 600, 600);
+              resolve(canvas.toDataURL("image/jpeg", 0.95));
+              break;
+            }
+
+            case "image-watermark-studio": {
+              canvas.width = width;
+              canvas.height = height;
+              ctx.drawImage(img, 0, 0);
+
+              const text = params.text || "© KOREVANTE STUDIO";
+              const style = params.style || "Diagonal Tiled";
+              const opacityStr = params.opacity || "Medium";
+              const colorName = params.color || "White";
+
+              let alpha = 0.3;
+              if (opacityStr.includes("Light")) alpha = 0.15;
+              if (opacityStr.includes("Solid")) alpha = 0.6;
+
+              const colorMap: Record<string, string> = {
+                White: `rgba(255, 255, 255, ${alpha})`,
+                Black: `rgba(0, 0, 0, ${alpha})`,
+                Red: `rgba(239, 68, 68, ${alpha})`,
+                Cyan: `rgba(6, 182, 212, ${alpha})`,
+              };
+              const fillStyle = colorMap[colorName] || `rgba(255, 255, 255, ${alpha})`;
+
+              if (style.includes("Diagonal Tiled")) {
+                ctx.save();
+                ctx.rotate(-Math.PI / 6);
+                ctx.font = `bold ${Math.max(16, Math.round(width / 35))}px sans-serif`;
+                ctx.fillStyle = fillStyle;
+                const stepX = Math.max(180, Math.round(width / 4));
+                const stepY = Math.max(100, Math.round(height / 6));
+
+                for (let x = -width; x < width * 2; x += stepX) {
+                  for (let y = -height; y < height * 2; y += stepY) {
+                    ctx.fillText(text, x, y);
+                  }
+                }
+                ctx.restore();
+              } else if (style.includes("Bottom Right")) {
+                const fontSize = Math.max(18, Math.round(width / 30));
+                ctx.font = `bold ${fontSize}px sans-serif`;
+                ctx.textAlign = "end";
+                ctx.fillStyle = fillStyle;
+                ctx.shadowColor = "rgba(0,0,0,0.5)";
+                ctx.shadowBlur = 4;
+                ctx.fillText(text, width - 30, height - 30);
+              } else {
+                const fontSize = Math.max(24, Math.round(width / 14));
+                ctx.save();
+                ctx.translate(width / 2, height / 2);
+                ctx.rotate(-Math.PI / 6);
+                ctx.font = `bold ${fontSize}px sans-serif`;
+                ctx.textAlign = "center";
+                ctx.textBaseline = "middle";
+                ctx.fillStyle = fillStyle;
+                ctx.fillText(text, 0, 0);
+                ctx.restore();
+              }
+
+              resolve(canvas.toDataURL(sourceFile.type === "image/png" ? "image/png" : "image/jpeg", 0.92));
+              break;
+            }
+
+            default:
+              resolve(null);
+          }
+        } catch (e) {
+          console.warn("[processImageOnCanvas] Fallback to server:", e);
+          resolve(null);
+        }
+      };
+
+      img.onerror = () => {
+        URL.revokeObjectURL(objectUrl);
+        resolve(null);
+      };
+
+      img.src = objectUrl;
+    });
+  };
+
   // Generic Image tool processing for other image tools
   const handleGenericGenerate = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -509,9 +789,21 @@ export function ImageToolClient({ tool, config }: ImageToolClientProps) {
 
     setLoading(true);
     setResultBase64(null);
+    const startTime = Date.now();
 
     try {
-      // Ensure file payload is under Vercel's 4.5MB limit
+      // 1. Try instant client-side canvas processing (0ms network delay, no Vercel payload limit)
+      const clientResult = await processImageOnCanvas(file, tool.slug, formData);
+      if (clientResult) {
+        setResultBase64(clientResult);
+        toast.success("Image processed successfully!");
+        // Record tool usage in background
+        const elapsed = Date.now() - startTime;
+        recordClientToolUsageAction(tool.slug, elapsed).catch(() => {});
+        return;
+      }
+
+      // 2. Server-side Sharp processing fallback
       const safeFile = await optimizeImageForUpload(file, 2048, 0.88);
 
       const formPayload = new FormData();
