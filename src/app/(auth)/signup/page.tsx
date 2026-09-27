@@ -87,6 +87,7 @@ function SignupForm() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const rawPlan = (searchParams.get("plan") || "").toLowerCase().trim();
+  const callbackUrl = searchParams.get("callbackUrl");
 
   // Determine initial plan from query param
   const initialPlanKey: PlanKey = React.useMemo(() => {
@@ -165,11 +166,11 @@ function SignupForm() {
 
       if (signInResult?.error) {
         toast.error("Account created but login failed. Please sign in manually.");
-        router.push("/login");
+        router.push(callbackUrl ? `/login?callbackUrl=${encodeURIComponent(callbackUrl)}` : "/login");
         return;
       }
 
-      const targetRoute = selectedPlanKey ? `/dashboard/billing?plan=${selectedPlanKey}&checkout=true` : "/dashboard";
+      const targetRoute = callbackUrl || (selectedPlanKey ? `/dashboard/billing?plan=${selectedPlanKey}&checkout=true` : "/dashboard");
       router.push(targetRoute);
       router.refresh();
     } catch {
@@ -181,7 +182,7 @@ function SignupForm() {
   async function handleGoogleSignUp() {
     setLoading(true);
     try {
-      const targetUrl = selectedPlanKey ? `/dashboard/billing?plan=${selectedPlanKey}&checkout=true` : "/dashboard";
+      const targetUrl = callbackUrl || (selectedPlanKey ? `/dashboard/billing?plan=${selectedPlanKey}&checkout=true` : "/dashboard");
       await signIn("google", { callbackUrl: targetUrl });
     } catch {
       toast.error("Google sign-up could not be initiated. Please try again.");
@@ -363,6 +364,14 @@ function SignupForm() {
               </div>
             </div>
 
+            {/* Callback tool notification banner if arriving from a tool click */}
+            {callbackUrl && (
+              <div className="mb-6 p-4 rounded-2xl bg-emerald-500/10 border border-emerald-500/25 text-xs text-emerald-600 dark:text-emerald-400 font-semibold flex items-center gap-3 shadow-sm">
+                <Sparkles className="h-5 w-5 shrink-0 text-emerald-500 dark:text-emerald-400" />
+                <span>Create your free account to activate your 7-day trial and continue directly to your selected tool.</span>
+              </div>
+            )}
+
             {/* Google Sign Up */}
             <Button
               variant="outline"
@@ -456,7 +465,10 @@ function SignupForm() {
 
             <p className="text-center text-xs text-muted-foreground mt-6 font-medium">
               Already have an account?{" "}
-              <Link href="/login" className="text-primary font-bold hover:underline">
+              <Link
+                href={callbackUrl ? `/login?callbackUrl=${encodeURIComponent(callbackUrl)}` : "/login"}
+                className="text-primary font-bold hover:underline"
+              >
                 Sign in
               </Link>
             </p>

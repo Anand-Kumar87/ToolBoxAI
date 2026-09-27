@@ -8,6 +8,9 @@ export interface AccessCheckResult {
   reason?: string;
   plan: PlanTier | "TRIAL" | "NONE";
   trialDaysRemaining?: number;
+  isTrialExpired?: boolean;
+  upgradeRequired?: boolean;
+  targetPlan?: PlanTier;
 }
 
 /**
@@ -58,8 +61,7 @@ export async function checkUserAccessAndLimits(
     return { allowed: false, reason: "User not found", plan: "NONE" };
   }
 
-
-  // Admins always have access
+  // Admins always have full unrestricted access
   if (user.role === "ADMIN") {
     return { allowed: true, plan: "PREMIUM" };
   }
@@ -85,12 +87,12 @@ export async function checkUserAccessAndLimits(
   const activeSub = user.subscriptions[0];
   const { isActive: isTrialActive, daysRemaining } = evaluateTrial(user.trial as any);
 
-  // If user has an active subscription
+  // 1. If user has an active paid subscription
   if (activeSub) {
     const planTier = activeSub.plan.name as PlanTier;
     const planConfig = SUBSCRIPTION_PLANS[planTier];
 
-    // Check Plan Hierarchy
+    // Check Plan Hierarchy: BASIC (1) -> PRO (2) -> PREMIUM (3)
     const tierRanks: Record<PlanTier, number> = { BASIC: 1, PRO: 2, PREMIUM: 3 };
     const userRank = tierRanks[planTier] || 1;
     const requiredRank = tierRanks[tool.planRequired] || 1;
@@ -98,12 +100,14 @@ export async function checkUserAccessAndLimits(
     if (userRank < requiredRank) {
       return {
         allowed: false,
-        reason: `This tool requires a ${tool.planRequired} plan. Please upgrade your subscription.`,
+        reason: `This tool requires a ${tool.planRequired} plan. Please upgrade your subscription to access it.`,
         plan: planTier,
+        upgradeRequired: true,
+        targetPlan: tool.planRequired,
       };
     }
 
-    // If it's an AI tool, check monthly AI usage count
+    // If it's an AI tool, check monthly AI usage count against plan quota
     if (tool.category === "AI") {
       const startOfMonth = new Date();
       startOfMonth.setDate(1);
@@ -120,8 +124,10 @@ export async function checkUserAccessAndLimits(
       if (usageCount >= planConfig.aiLimit) {
         return {
           allowed: false,
-          reason: `You have reached your monthly limit of ${planConfig.aiLimit} AI requests. Please upgrade or wait for the next cycle.`,
+          reason: `You have reached your monthly limit of ${planConfig.aiLimit} AI requests. Please upgrade your plan or wait for the next cycle.`,
           plan: planTier,
+          upgradeRequired: true,
+          targetPlan: "PRO",
         };
       }
     }
@@ -129,12 +135,21 @@ export async function checkUserAccessAndLimits(
     return { allowed: true, plan: planTier };
   }
 
-  // If user has an active 7-day trial
+  // 2. If user is in their active 7-day free trial
   if (isTrialActive) {
-    // Trial users have full VIP access across all tools during their 7-day trial period
+    // Free Trial is limited to BASIC tools. Pro and Premium tools require upgrading to Pro!
+    if (tool.planRequired === "PRO" || tool.planRequired === "PREMIUM") {
+      return {
+        allowed: false,
+        reason: `This tool is exclusive to ${tool.planRequired} members. Your 7-Day Free Trial gives you access to all Basic tools. Upgrade to Pro to unlock this tool!`,
+        plan: "TRIAL",
+        trialDaysRemaining: daysRemaining,
+        upgradeRequired: true,
+        targetPlan: tool.planRequired,
+      };
+    }
 
-
-    // Trial usage cap (e.g. 50 AI requests during trial)
+    // Trial usage cap for basic AI tools (50 AI requests during trial)
     if (tool.category === "AI") {
       const trialUsage = await prisma.toolUsage.count({
         where: {
@@ -146,9 +161,11 @@ export async function checkUserAccessAndLimits(
       if (trialUsage >= 50) {
         return {
           allowed: false,
-          reason: "Trial AI limit reached (50 requests). Subscribe to continue creating without limits.",
+          reason: "Trial limit reached (50 AI requests). Please subscribe to continue creating without limits.",
           plan: "TRIAL",
           trialDaysRemaining: daysRemaining,
+          upgradeRequired: true,
+          targetPlan: "BASIC",
         };
       }
     }
@@ -160,12 +177,15 @@ export async function checkUserAccessAndLimits(
     };
   }
 
-  // If trial has expired and no subscription
+  // 3. If trial has expired and user has no active paid subscription
   return {
     allowed: false,
-    reason: "Your 7-day trial has expired. Please choose a subscription plan to continue using Korevante Studio.",
+    reason: "Your 7-day free trial has expired. Please choose a Basic or Pro plan to continue using Korevante Studio tools.",
     plan: "NONE",
     trialDaysRemaining: 0,
+    isTrialExpired: true,
+    upgradeRequired: true,
+    targetPlan: "BASIC",
   };
 }
 

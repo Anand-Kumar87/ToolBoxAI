@@ -10,7 +10,8 @@ import { PdfToolClient } from "@/components/tools/pdf-tool-client";
 import { DevToolClient } from "@/components/tools/dev-tool-client";
 import { VideoToolClient } from "@/components/tools/video-tool-client";
 import { checkIntelToolAuthorization } from "@/actions/intel";
-import { ChevronLeft, Lock } from "lucide-react";
+import { checkUserAccessAndLimits } from "@/services/usage";
+import { ChevronLeft, Lock, Sparkles } from "lucide-react";
 import Link from "next/link";
 
 export async function generateMetadata({ params }: { params: Promise<{ category: string; slug: string }> }) {
@@ -34,12 +35,14 @@ export default async function ToolPage({ params }: { params: Promise<{ category:
 
   const session = await getServerAuthSession();
   if (!session?.user) {
-    redirect(`/login?callbackUrl=/tools/${category}/${slug}`);
+    redirect(`/signup?callbackUrl=/tools/${category}/${slug}`);
   }
+
+  const userId = (session.user as any).id as string;
 
   // Security Gate: Check Admin clearance for restricted intelligence tools
   if (tool.restrictedToAdmin) {
-    const isAuthorized = await checkIntelToolAuthorization((session.user as any).id);
+    const isAuthorized = await checkIntelToolAuthorization(userId);
     if (!isAuthorized) {
       return (
         <div className="container mx-auto max-w-4xl px-4 py-20 text-center">
@@ -65,6 +68,53 @@ export default async function ToolPage({ params }: { params: Promise<{ category:
         </div>
       );
     }
+  }
+
+  // Plan & Trial Access Gatekeeper: Check if user's subscription or trial tier permits using this tool
+  const access = await checkUserAccessAndLimits(userId, tool.slug);
+  if (!access.allowed) {
+    const targetPlan = access.targetPlan || "PRO";
+    const isExpired = access.isTrialExpired;
+
+    return (
+      <div className="container mx-auto max-w-4xl px-4 py-16 text-center">
+        <div className="p-8 sm:p-12 rounded-3xl bg-card border border-border/80 max-w-xl mx-auto space-y-6 shadow-2xl relative overflow-hidden">
+          <div className="absolute top-0 right-0 w-64 h-64 bg-emerald-500/10 rounded-full blur-3xl pointer-events-none -z-10" />
+
+          <div className="h-20 w-20 mx-auto rounded-3xl bg-emerald-500/15 border border-emerald-500/30 text-emerald-400 flex items-center justify-center shadow-lg shadow-emerald-500/10">
+            <Lock className="h-10 w-10" />
+          </div>
+
+          <div className="space-y-2">
+            <span className="inline-block px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
+              {isExpired ? "Free Trial Expired" : `${tool.planRequired} Plan Required`}
+            </span>
+            <h1 className="text-2xl sm:text-3xl font-black text-foreground">
+              {isExpired ? "7-Day Free Trial Ended" : `Unlock ${tool.name}`}
+            </h1>
+            <p className="text-sm text-muted-foreground leading-relaxed max-w-md mx-auto">
+              {access.reason}
+            </p>
+          </div>
+
+          <div className="pt-2 flex flex-col sm:flex-row gap-3 justify-center">
+            <Link
+              href={isExpired ? "/pricing" : `/pricing?plan=${targetPlan.toLowerCase()}`}
+              className="inline-flex items-center justify-center gap-2 px-6 py-3 rounded-2xl bg-primary text-primary-foreground font-bold hover:bg-primary/90 transition-all shadow-lg shadow-emerald-500/20 hover:scale-[1.02] active:scale-[0.98]"
+            >
+              <Sparkles className="h-4 w-4" />
+              {isExpired ? "View Plans & Subscribe" : `Upgrade to ${targetPlan} Plan`}
+            </Link>
+            <Link
+              href="/tools"
+              className="inline-flex items-center justify-center gap-2 px-6 py-3 rounded-2xl bg-muted/60 text-muted-foreground hover:text-foreground text-sm font-semibold hover:bg-muted transition-all"
+            >
+              <ChevronLeft className="h-4 w-4" /> Explore Basic Tools
+            </Link>
+          </div>
+        </div>
+      </div>
+    );
   }
 
   const isAI = tool.category === "AI";

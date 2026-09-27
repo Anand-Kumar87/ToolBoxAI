@@ -82,6 +82,10 @@
   * {
     @apply border-border;
   }
+  html {
+    -webkit-text-size-adjust: 100%;
+    text-size-adjust: 100%;
+  }
   html, body {
     touch-action: manipulation;
     -webkit-tap-highlight-color: transparent;
@@ -97,6 +101,10 @@
   }
 
   @media (max-width: 768px) {
+    /* Prevent iOS Safari & Android Chrome auto-zoom on focus by enforcing 16px minimum font size */
+    input, select, textarea {
+      font-size: 16px !important;
+    }
     .glass-panel, .glass-card {
       backdrop-filter: blur(10px) !important;
       -webkit-backdrop-filter: blur(10px) !important;

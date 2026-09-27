@@ -3,7 +3,8 @@
 import * as React from "react";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
-import { Search, Sparkles } from "lucide-react";
+import { useSession } from "next-auth/react";
+import { Search, Sparkles, Lock } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { TOOLS_REGISTRY } from "@/config/tools";
@@ -223,18 +224,25 @@ function DynamicIcon({ name }: { name: string }) {
 }
 
 function ToolCard({ tool }: { tool: (typeof TOOLS_REGISTRY)[number] }) {
-  const href = `/tools/${tool.category.toLowerCase()}/${tool.slug}`;
+  const { data: session } = useSession();
+  const toolUrl = `/tools/${tool.category.toLowerCase()}/${tool.slug}`;
+  const targetHref = session?.user
+    ? toolUrl
+    : `/signup?callbackUrl=${encodeURIComponent(toolUrl)}`;
+
+  const isPro = tool.planRequired === "PRO" || tool.planRequired === "PREMIUM";
 
   return (
-    <Link href={href} className="group">
+    <Link href={targetHref} className="group block h-full active:scale-[0.98] transition-transform">
       <Card className="h-full border-border/70 hover:border-primary/50 hover:shadow-md transition-all duration-200 cursor-pointer">
         <CardHeader className="space-y-3 pb-3">
           <div className="flex items-start justify-between">
             <div className={`h-10 w-10 rounded-xl bg-gradient-to-tr ${CATEGORY_COLORS[tool.category] || "from-slate-500 to-gray-500"} flex items-center justify-center text-white shadow-sm`}>
               <DynamicIcon name={tool.icon} />
             </div>
-            <span className={cn("text-xs font-semibold px-2 py-0.5 rounded-full border", PLAN_COLORS[tool.planRequired])}>
-              {tool.planRequired}
+            <span className={cn("text-xs font-semibold px-2 py-0.5 rounded-full border inline-flex items-center gap-1", PLAN_COLORS[tool.planRequired])}>
+              {isPro && <Lock className="h-3 w-3" />}
+              {tool.planRequired === "BASIC" ? "Basic / Trial" : tool.planRequired}
             </span>
           </div>
           <CardTitle className="text-sm font-semibold leading-tight group-hover:text-primary transition-colors">

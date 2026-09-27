@@ -27,7 +27,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { ToolDefinition } from "@/types";
 import { ImageToolConfig } from "@/config/image-tools";
 import { processImageAction } from "@/actions/image";
-import { recordClientToolUsageAction } from "@/actions/usage";
+import { recordClientToolUsageAction, checkToolAccessAction } from "@/actions/usage";
 import { optimizeImageForUpload } from "@/lib/image-optimizer-client";
 
 interface ImageToolClientProps {
@@ -792,6 +792,14 @@ export function ImageToolClient({ tool, config }: ImageToolClientProps) {
     const startTime = Date.now();
 
     try {
+      // Verify subscription or trial permissions
+      const accessCheck = await checkToolAccessAction(tool.slug);
+      if (!accessCheck.allowed) {
+        toast.error(accessCheck.error || "This tool requires a plan upgrade.");
+        setLoading(false);
+        return;
+      }
+
       // 1. Try instant client-side canvas processing (0ms network delay, no Vercel payload limit)
       const clientResult = await processImageOnCanvas(file, tool.slug, formData);
       if (clientResult) {

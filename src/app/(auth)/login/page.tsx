@@ -338,7 +338,10 @@ function LoginForm() {
       {/* Sign up prompt */}
       <p className="text-center text-xs text-muted-foreground mt-8 font-medium">
         Don&apos;t have an account?{" "}
-        <Link href="/signup" className="text-primary font-bold hover:underline">
+        <Link
+          href={callbackUrl ? `/signup?callbackUrl=${encodeURIComponent(callbackUrl)}` : "/signup"}
+          className="text-primary font-bold hover:underline"
+        >
           Start 7-Day Free Trial
         </Link>
       </p>
